@@ -3,6 +3,7 @@ const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
 const TOKEN = process.env.DISCORD_TOKEN;
 const PREFIX = process.env.BOT_PREFIX || '!';
 
+// Bot will use all intents & partials
 const client = new Client({
   intents: Object.values(GatewayIntentBits),
   partials: Object.values(Partials),
