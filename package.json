@@ -9,6 +9,7 @@
   "author": "Symphonic3",
   "license": "GPL-3.0-or-later",
   "dependencies": {
+    "axios": "^1.8.4",
     "discord.js": "^14.18.0"
   }
 }
