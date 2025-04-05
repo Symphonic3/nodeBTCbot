@@ -26,7 +26,7 @@ async function checkDataEdit(message) {
  * @param {Message} message 
  */
 async function checkMod(message) {
-  const hasPermission = message.member?.roles?.cache.some(role => modRole == role.id);
+  const hasPermission = message.member?.roles?.cache.some(role => role.name === modRole);
 
   if (!hasPermission) {
     // No permission to proceed
