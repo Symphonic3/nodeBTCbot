@@ -36,7 +36,7 @@ function cachifyFunction(fn, timeoutMs) {
  * which will automatically write to disk when the object is updated.
  * 
  * Don't use this if the object will be updated quickly or frequently.
- * @param {string} filePath - The json file containing the object
+ * @param {string} filePath - The json file containing the object, path starts from project root
  * @returns {Object}
  */
 function createDeepWatchedJsonStore(filePath) {
