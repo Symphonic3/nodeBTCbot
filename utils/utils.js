@@ -7,7 +7,7 @@ const fs = require('fs');
  * This will independently cache function calls with different arguments; don't use it
  * if the function is complex and often takes unique arguments.
  * @param {function} fn - The function to wrap
- * @param {*} timeoutMs - The cache timeout
+ * @param {number} timeoutMs - The cache timeout
  * @returns 
  */
 function cachifyFunction(fn, timeoutMs) {
