@@ -65,7 +65,7 @@ client.on(Events.MessageCreate, async (message) => {
     await command.execute(message, args);  // Execute the command
   } catch (error) {
     console.error(error);
-    message.reply('There was an error executing the command!');
+    message.channel.send('There was an error executing the command!');
   }
 });
 

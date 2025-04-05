@@ -14,7 +14,7 @@ async function checkDataEdit(message) {
 
   if (!hasPermission) {
     // No permission to proceed
-    await message.reply("No permission to use this command.");
+    await message.channel.send("No permission to use this command.");
   }
 
   return hasPermission;
@@ -30,7 +30,7 @@ async function checkMod(message) {
 
   if (!hasPermission) {
     // No permission to proceed
-    await message.reply("No permission to use this command.");
+    await message.channel.send("No permission to use this command.");
   }
 
   return hasPermission;

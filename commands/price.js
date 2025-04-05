@@ -3,9 +3,9 @@ const { getBitcoinPriceInCurrency, formatCurrency, getBitcoinPriceUSD } = requir
  
 async function price(message, args) {
   if (args.length == 1 && args[0].toLowerCase() == 'help') {
-    await message.reply('**Currency Examples**: !p gbp, !p cad, !p xau');
-    await message.reply(`**Other Supported Items:** ${getAllItems().join(', ')}`);
-    await message.reply("**!p <item> sats** will give you the cost of the item in satoshis");
+    await message.channel.send('**Currency Examples**: !p gbp, !p cad, !p xau');
+    await message.channel.send(`**Other Supported Items:** ${getAllItems().join(', ')}`);
+    await message.channel.send("**!p <item> sats** will give you the cost of the item in satoshis");
     return;
   }
 
@@ -13,7 +13,7 @@ async function price(message, args) {
   const itemPrice = getItemPrice(unit.toLowerCase());
 
   if (isNaN(itemPrice) && isNaN((await getBitcoinPriceInCurrency(unit)))) {
-    await message.reply('Invalid symbol.');
+    await message.channel.send('Invalid symbol.');
     return;
   } 
 
@@ -67,17 +67,17 @@ async function price(message, args) {
 
 async function convert(message, args) {
   if (args.length == 1) {
-    await message.reply('To use convert use the format: !convert 15.00 USD BTC or !convert 10000 sat mBTC');
+    await message.channel.send('To use convert use the format: !convert 15.00 USD BTC or !convert 10000 sat mBTC');
     return;
   }
   if (!args.length == 3) {
-    await message.reply('Invalid format.');
+    await message.channel.send('Invalid format.');
     return;
   }
 
   const amount = parseFloat(args[0]);
   if (isNaN(amount)) {
-    await message.reply('Invalid amount.');
+    await message.channel.send('Invalid amount.');
     return;
   }
 
@@ -85,14 +85,14 @@ async function convert(message, args) {
   const itemPriceA = getItemPrice(a.toLowerCase());
   
   if (isNaN(itemPriceA) && isNaN(await getBitcoinPriceInCurrency(a))) {
-    await message.reply('Invalid symbol.');
+    await message.channel.send('Invalid symbol.');
     return;
   } 
 
   const b = args[2].toUpperCase();
   const itemPriceB = getItemPrice(b.toLowerCase());
   if (isNaN(itemPriceB) && isNaN(await getBitcoinPriceInCurrency(b))) {
-    await message.reply('Invalid symbol.');
+    await message.channel.send('Invalid symbol.');
     return;
   }
 
@@ -123,20 +123,20 @@ async function convert(message, args) {
 
 async function wage(message, args) {
   if (args.length != 2) {
-    await message.reply("To use wage include the hourly amount earned in the wage and a currency. ex. `wage 15.00 USD`");
+    await message.channel.send("To use wage include the hourly amount earned in the wage and a currency. ex. `wage 15.00 USD`");
     return;
   }
 
   const amount = parseFloat(args[0]);
   if (isNaN(amount)) {
-    await message.reply('Invalid amount.');
+    await message.channel.send('Invalid amount.');
     return;
   }
 
   const currency = args[1].toUpperCase();
   
   if (isNaN(await getBitcoinPriceInCurrency(currency))) {
-    await message.reply('Invalid symbol.');
+    await message.channel.send('Invalid symbol.');
     return;
   }
 
@@ -150,7 +150,7 @@ async function wage(message, args) {
  * @param {*} b formatted quantity of b
  */
 async function worth(message, a, b) {
-  await message.reply(`**${a}** is worth **${b}**`);
+  await message.channel.send(`**${a}** is worth **${b}**`);
 }
 
 module.exports = {

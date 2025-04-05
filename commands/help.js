@@ -10,7 +10,7 @@ function helpCommand(message, args) {
   const commandList = commandNames.map(command => `${message.client.prefix + command}`).join(", ");
 
   // Send the list of commands with the bot support info.
-  message.reply(`Commands this bot accepts: ${commandList}. For bot support inquire at <http://bitcointech.help/> or in the issues at <https://github.com/Symphonic3/nodeBTCbot/issues>`);
+  message.channel.send(`Commands this bot accepts: ${commandList}. For bot support inquire at <http://bitcointech.help/> or in the issues at <https://github.com/Symphonic3/nodeBTCbot/issues>`);
 }
 
 module.exports = {
