@@ -41,6 +41,9 @@ async function getLatestTicker(tickerSymbol) {
   return await getLatestClosePrice(tickerSymbol);
 }
 
+/**
+ * Gets the bitcoin price in USD, cached at 1 minute.
+ */
 const getBitcoinPriceUSD = cachifyFunction(getLatestBitcoinPriceUSD, 1000*60*1); //1 min
 const getTicker = cachifyFunction(getLatestTicker, 1000*60*60); //1 hour
 
@@ -109,6 +112,11 @@ function formatCurrency(amount, currency) {
   return `${amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} ${currencyUpper}`;
 }
 
+/**
+ * Gets the fancy formatted bitcoin price in a currency, where the bitcoin-usd price
+ * is cached at 1 minute and the usd-currency price is cached at 1 hour.
+ * @param {string} currencySymbol - an ISO 4217 3-letter currency code, including XAG and XAU.
+ */
 async function getFancyBitcoinPriceInCurrency(currencySymbol) {
   let currencyUpper = currencySymbol.toUpperCase()
 
