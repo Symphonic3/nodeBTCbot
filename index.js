@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
-const { checkCurrencySymbol, getBitcoinPriceInCurrency } = require('./services/yahoofinance.js');
+const { getBitcoinPriceInCurrency } = require('./services/yahoofinance.js');
 const { formatCurrency } = require('./utils/utils.js');
 
 const TOKEN = process.env.DISCORD_TOKEN;

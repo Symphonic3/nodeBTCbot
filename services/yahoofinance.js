@@ -2,23 +2,23 @@ const axios = require('axios');
 const { cachifyFunction } = require('../utils/utils.js');
 
 const iso4217CurrencyCodes = [
-    "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", 
-    "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", 
-    "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", 
-    "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", 
-    "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "FOK", "GBP", "GEL", "GGP", 
-    "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", 
-    "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", 
-    "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", 
-    "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", 
-    "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", 
-    "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", 
-    "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", 
-    "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", 
-    "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", 
-    "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VND", 
-    "VUV", "WST", "XAF", "XAG", "XAU", "XCD", "XOF", "XPD", "XPF", "XPT", 
-    "YER", "ZAR", "ZMK", "ZMW", "ZWD"
+  "AED", "AFN", "ALL", "AMD", "ANG", "AOA", "ARS", "AUD", "AWG", "AZN", 
+  "BAM", "BBD", "BDT", "BGN", "BHD", "BIF", "BMD", "BND", "BOB", "BRL", 
+  "BSD", "BTN", "BWP", "BYN", "BZD", "CAD", "CDF", "CHF", "CLP", "CNY", 
+  "COP", "CRC", "CUC", "CUP", "CVE", "CZK", "DJF", "DKK", "DOP", "DZD", 
+  "EGP", "ERN", "ETB", "EUR", "FJD", "FKP", "FOK", "GBP", "GEL", "GGP", 
+  "GHS", "GIP", "GMD", "GNF", "GTQ", "GYD", "HKD", "HNL", "HRK", "HTG", 
+  "HUF", "IDR", "ILS", "INR", "IQD", "IRR", "ISK", "JMD", "JOD", "JPY", 
+  "KES", "KGS", "KHR", "KMF", "KPW", "KRW", "KWD", "KYD", "KZT", "LAK", 
+  "LBP", "LKR", "LRD", "LSL", "LTL", "LVL", "LYD", "MAD", "MDL", "MGA", 
+  "MKD", "MMK", "MNT", "MOP", "MRO", "MUR", "MVR", "MWK", "MXN", "MYR", 
+  "MZN", "NAD", "NGN", "NIO", "NOK", "NPR", "NZD", "OMR", "PAB", "PEN", 
+  "PGK", "PHP", "PKR", "PLN", "PYG", "QAR", "RON", "RSD", "RUB", "RWF", 
+  "SAR", "SBD", "SCR", "SDG", "SEK", "SGD", "SHP", "SLL", "SOS", "SRD", 
+  "SSP", "STN", "SVC", "SYP", "SZL", "THB", "TJS", "TMT", "TND", "TOP", 
+  "TRY", "TTD", "TWD", "TZS", "UAH", "UGX", "USD", "UYU", "UZS", "VND", 
+  "VUV", "WST", "XAF", "XAG", "XAU", "XCD", "XOF", "XPD", "XPF", "XPT", 
+  "YER", "ZAR", "ZMK", "ZMW", "ZWD"
 ];
 
 async function getLatestClosePrice(ticker) {
@@ -54,25 +54,25 @@ async function getLatestClosePrice(ticker) {
 }
 
 async function getLatestBitcoinPriceUSD() {
-    return await getLatestClosePrice("BTC-USD");
+  return await getLatestClosePrice("BTC-USD");
 }
 
 async function getLatestCurrencyPerOneUSD(currencySymbol) {
-    return await getLatestClosePrice(currencySymbol.toUpperCase() + "=X");
+  return await getLatestClosePrice(currencySymbol.toUpperCase() + "=X");
 }
 
 const getBitcoinPriceUSD = cachifyFunction(getLatestBitcoinPriceUSD, 1000*60*2); //2 min
 const getCurrencyPerOneUSD = cachifyFunction(getLatestCurrencyPerOneUSD, 1000*60*60); //1 hour
 
 async function getBitcoinPriceInCurrency(currencySymbol) { 
-    // usd/btc * currency/usd = currency/btc
-    let bitcoinPrice = await getBitcoinPriceUSD();
-    let currencyPerUSD = await getCurrencyPerOneUSD(currencySymbol);
-    return bitcoinPrice*currencyPerUSD;
+  // usd/btc * currency/usd = currency/btc
+  let bitcoinPrice = await getBitcoinPriceUSD();
+  let currencyPerUSD = await getCurrencyPerOneUSD(currencySymbol);
+  return bitcoinPrice*currencyPerUSD;
 }
 
 function checkCurrencySymbol(currencySymbol) {
-    return iso4217CurrencyCodes.includes(currencySymbol.toUpperCase());
+  return iso4217CurrencyCodes.includes(currencySymbol.toUpperCase());
 }
 
 module.exports = { getBitcoinPriceUSD, getCurrencyPerOneUSD, getBitcoinPriceInCurrency, checkCurrencySymbol }
