@@ -16,6 +16,9 @@ async function getLatestClosePrice(ticker) {
     }
 
     const result = data.chart.result[0];
+    if (ticker.toUpperCase() == "BTC-USD") {
+      notifyNewPrice(result.meta.fiftyTwoWeekHigh);
+    }
     const indicators = result.indicators.quote[0];
     const closePrices = indicators.close;
 
@@ -36,7 +39,7 @@ async function getLatestClosePrice(ticker) {
 
 async function getLatestBitcoinPriceUSD() {
   const price = await getLatestClosePrice("BTC-USD");
-  
+
   // let ath service know
   notifyNewPrice(price);
   return price;
