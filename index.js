@@ -1,6 +1,5 @@
 const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
-const { getBitcoinPriceInCurrency } = require('./services/yahoofinance.js');
-const { formatCurrency } = require('./utils/utils.js');
+const fs = require('fs');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 const PREFIX = process.env.BOT_PREFIX || '!';
@@ -10,6 +9,16 @@ const client = new Client({
   intents: Object.values(GatewayIntentBits),
   partials: Object.values(Partials),
 });
+
+// Dynamically load command from js files
+client.commands = new Map();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));;
+for (const file of commandFiles) {
+  const commands = require('./commands/' + file); // path.join didn't work here on windows and i don't know why and i'm not fixing it
+  Object.entries(commands).forEach(([commandName, command]) => {
+    client.commands.set(commandName, command);
+  });
+}
 
 // Bot is ready
 client.once(Events.ClientReady, () => {
@@ -21,11 +30,18 @@ client.on(Events.MessageCreate, async (message) => {
   if (!message.content.startsWith(PREFIX) || message.author.bot) return;
 
   const args = message.content.slice(PREFIX.length).trim().split(/ +/);
-  const command = args.shift().toLowerCase();
+  const commandName = args.shift().toLowerCase();
 
-  if (command === 'ping') {
-    let price = await getBitcoinPriceInCurrency("RUB");
-    message.reply(`**1 bitcoin** is worth **${formatCurrency(price, "RUB")}**`);
+  // Find the command in the map
+  const command = client.commands.get(commandName);
+
+  if (!command) return; // Command doesn't exist
+
+  try {
+    await command.execute(message, args);  // Execute the command
+  } catch (error) {
+    console.error(error);
+    message.reply('There was an error executing the command!');
   }
 });
 
