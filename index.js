@@ -47,7 +47,13 @@ client.once(Events.ClientReady, async () => {
 client.on(Events.MessageCreate, async (message) => {
   if (!message.content.startsWith(PREFIX) || message.author.bot) return;
 
-  const args = message.content.slice(PREFIX.length).trim().split(/ +/);
+  // Isolates arguments in quotation marks as one argument while allowing escaping ( \" or \' )
+  const args = message.content
+    .slice(PREFIX.length)
+    .trim()
+    .match(/(?:[^\s"]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')+/g)
+    .map(arg => arg.replace(/^['"]|['"]$/g, '')); // Removes surrounding quotes if present
+
   const commandName = args.shift().toLowerCase();
 
   // Find the command in the map
