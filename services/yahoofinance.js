@@ -112,9 +112,11 @@ function formatCurrency(amount, currency) {
 async function getFancyBitcoinPriceInCurrency(currencySymbol) {
   let currencyUpper = currencySymbol.toUpperCase()
 
-  // Check for special bitcoin case
+  // Check for special cases
   if (currencyUpper === "BTC")
     return "1 bitcoin";
+  if (currencyUpper === "CAT")
+    return ":warning: :black_cat: stop trying to price cats!";
 
   // Check if it's a valid currency
   if (!iso4217CurrencyCodes.includes(currencyUpper))
