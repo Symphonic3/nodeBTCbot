@@ -12,7 +12,7 @@ async function price(message, args) {
   let unit = args.length > 0 ? args[0].toUpperCase() : "USD";
   const itemPrice = getItemPrice(unit.toLowerCase());
 
-  if (isNaN(itemPrice) && isNaN(getBitcoinPriceInCurrency(unit))) {
+  if (isNaN(itemPrice) && isNaN((await getBitcoinPriceInCurrency(unit)))) {
     await message.reply('Invalid symbol.');
     return;
   } 
@@ -121,6 +121,28 @@ async function convert(message, args) {
   await worth(message, formattedA, formattedB);
 }
 
+async function wage(message, args) {
+  if (args.length != 2) {
+    await message.reply("To use wage include the hourly amount earned in the wage and a currency. ex. `wage 15.00 USD`");
+    return;
+  }
+
+  const amount = parseFloat(args[0]);
+  if (isNaN(amount)) {
+    await message.reply('Invalid amount.');
+    return;
+  }
+
+  const currency = args[1].toUpperCase();
+  
+  if (isNaN(await getBitcoinPriceInCurrency(currency))) {
+    await message.reply('Invalid symbol.');
+    return;
+  }
+
+  await worth(message, "1 bitcoin", ((await getBitcoinPriceInCurrency(currency))/amount).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 }) + " of your hours");
+}
+
 /**
  * Short helper to reply a worth statement; a is worth b.
  * @param {*} message The message to reply to
@@ -140,5 +162,8 @@ module.exports = {
   },
   convert: {
     execute: convert
+  },
+  wage: {
+    execute: wage
   }
 }
