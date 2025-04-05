@@ -1,6 +1,7 @@
-const { Client, GatewayIntentBits, Partials, Events, ActivityType } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBuilder } = require('discord.js');
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
+const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -66,6 +67,36 @@ client.on(Events.MessageCreate, async (message) => {
   } catch (error) {
     console.error(error);
     message.channel.send('There was an error executing the command!');
+  }
+});
+
+// Send captchas
+client.on('guildMemberAdd', async (member) => {
+  if (process.env.ENABLE_ANTI_BOT === "1" && process.env.NEW_USER_MSG !== "") {
+    try {
+      await member.send(process.env.NEW_USER_MSG);
+      await member.send("Please complete the following captcha:");
+
+      const attachment = new AttachmentBuilder(await getCaptchaImage(captchaForUser(member.id)), { name: 'captcha.png' });
+      await member.send({ files: [attachment] });
+    } catch (error) {
+      console.error('Error sending captcha to new member:', error);
+    }
+  }
+});
+
+// Log deleted messages
+client.on('messageDelete', async (message) => {
+  if (process.env.ENABLE_DELETE_LOG === "1") {
+    try {
+      const reportChannel = message.guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+      if (reportChannel && message.channel.id !== reportChannel.id) {
+        const msg = `new message deleted: ${message.content} - ${message.author}`;
+        await reportChannel.send(msg);
+      }
+    } catch (error) {
+      console.error('Error logging deleted message:', error);
+    }
   }
 });
 
