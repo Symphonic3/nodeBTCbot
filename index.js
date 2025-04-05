@@ -3,13 +3,13 @@ const fs = require('fs');
 const { getFancyBitcoinPriceInCurrency } = require('./services/yahoofinance');
 
 const TOKEN = process.env.DISCORD_TOKEN;
-const PREFIX = process.env.BOT_PREFIX || '!';
 
 // Bot will use all intents & partials
 const client = new Client({
   intents: Object.values(GatewayIntentBits),
   partials: Object.values(Partials),
 });
+client.prefix = process.env.BOT_PREFIX || '!';
 
 // Dynamically load command from js files
 client.commands = new Map();
@@ -45,11 +45,11 @@ client.once(Events.ClientReady, async () => {
 
 // Respond to commands
 client.on(Events.MessageCreate, async (message) => {
-  if (!message.content.startsWith(PREFIX) || message.author.bot) return;
+  if (!message.content.startsWith(client.prefix) || message.author.bot) return;
 
   // Isolates arguments in quotation marks as one argument while allowing escaping ( \" or \' )
   const args = message.content
-    .slice(PREFIX.length)
+    .slice(client.prefix.length)
     .trim()
     .match(/(?:[^\s"]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')+/g)
     .map(arg => arg.replace(/^['"]|['"]$/g, '')); // Removes surrounding quotes if present
