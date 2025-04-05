@@ -41,7 +41,7 @@ async function getLatestTicker(tickerSymbol) {
   return await getLatestClosePrice(tickerSymbol);
 }
 
-const getBitcoinPriceUSD = cachifyFunction(getLatestBitcoinPriceUSD, 1000*60*2); //2 min
+const getBitcoinPriceUSD = cachifyFunction(getLatestBitcoinPriceUSD, 1000*60*1); //1 min
 const getTicker = cachifyFunction(getLatestTicker, 1000*60*60); //1 hour
 
 async function getBitcoinPriceInTicker(tickerSymbol) { // A ticker is normally a currency of format i.e. "CAD=X", but it could be unique for silver/gold etc. cases
