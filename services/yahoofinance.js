@@ -93,9 +93,16 @@ const CURRENCY_FORMAT_DICT = {
   "ZAR": { symbol: "R", name: "South African Rands"},
   "RUB": { symbol: "₽", name: "Russian Rubles"},
   "XAU": { symbol: "", name: "ounces of gold", replaceCode: "GC=F"},
-  "XAG": { symbol: "", name: "ounces of silver", replaceCode: "SI=F"}
+  "XAG": { symbol: "", name: "ounces of silver", replaceCode: "SI=F"},
+  "BTC": { symbol: "", name: "bitcoin", replaceCode: "BTC-USD"}
 };
 
+/**
+ * Formats an amount of currency as a nice string
+ * @param {number|string} amount 
+ * @param {string} currency 
+ * @returns {string}
+ */
 function formatCurrency(amount, currency) {
   // Normalize currency to uppercase
   const currencyUpper = currency.toUpperCase();
@@ -113,28 +120,22 @@ function formatCurrency(amount, currency) {
 }
 
 /**
- * Gets the fancy formatted bitcoin price in a currency, where the bitcoin-usd price
+ * Gets the bitcoin price in a currency, where the bitcoin-usd price
  * is cached at 1 minute and the usd-currency price is cached at 1 hour.
  * @param {string} currencySymbol - an ISO 4217 3-letter currency code, including XAG and XAU.
  */
-async function getFancyBitcoinPriceInCurrency(currencySymbol) {
+async function getBitcoinPriceInCurrency(currencySymbol) {
   let currencyUpper = currencySymbol.toUpperCase()
-
-  // Check for special cases
-  if (currencyUpper === "BTC")
-    return "1 bitcoin";
-  if (currencyUpper === "CAT")
-    return ":warning: :black_cat: stop trying to price cats!";
 
   // Check if it's a valid currency
   if (!iso4217CurrencyCodes.includes(currencyUpper))
-    return "Unknown currency symbol.";
+    return NaN;
 
   // Convert the currency code to a special code if necessary
   let useCurrencyCode = CURRENCY_FORMAT_DICT[currencyUpper]?.replaceCode ? CURRENCY_FORMAT_DICT[currencyUpper].replaceCode : (currencyUpper + "=X");
   
   let price = await getBitcoinPriceInTicker(useCurrencyCode);
-  return formatCurrency(price, currencySymbol);
+  return price;
 }
 
-module.exports = { getBitcoinPriceUSD, getFancyBitcoinPriceInCurrency }
+module.exports = { getBitcoinPriceUSD, getBitcoinPriceInCurrency, formatCurrency }

@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, Partials, Events, ActivityType } = require('discord.js');
 const fs = require('fs');
-const { getFancyBitcoinPriceInCurrency } = require('./services/yahoofinance');
+const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -22,7 +22,7 @@ for (const file of commandFiles) {
 }
 
 async function updatePresence() {
-  let newPresence = await getFancyBitcoinPriceInCurrency("USD"); // Get the updated presence text
+  let newPresence = formatCurrency(await getBitcoinPriceUSD(), "USD"); // Get the updated presence text
 
   try {
     await client.user.setPresence({

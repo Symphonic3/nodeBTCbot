@@ -79,4 +79,50 @@ function editItemPrice(code, price) {
   return `Successfully updated item: ${ITEM_DICT[code.toLowerCase()].name} with value $${cost}`;
 }
 
-module.exports = { saveItem, editItemPrice }
+/**
+ * Returns the price in USD of an existing item.
+ * @param {string} code - The calling code of the item.
+ * @returns {number} The price
+ */
+function getItemPrice(code) {
+  // Validate calling code.
+  if (!code || !Object.prototype.hasOwnProperty.call(ITEM_DICT, code.toLowerCase())) {
+    return NaN;
+  }
+
+  return ITEM_DICT[code.toLowerCase()].cost;
+}
+
+/**
+ * Returns if an item should be formatted as single
+ * @param {string} code - The calling code of the item.
+ * @returns {boolean}
+ */
+function isSingleItem(code) {
+  return ITEM_DICT[code.toLowerCase()]?.single;
+}
+
+/**
+ * Formats an amount of an item  as a nice string
+ * @param {number} amount 
+ * @param {string} code 
+ * @returns {string}
+ */
+function formatItem(amount, code) {
+  // Validate calling code.
+  if (!code || !Object.prototype.hasOwnProperty.call(ITEM_DICT, code.toLowerCase())) {
+    return "";
+  }
+
+  const item = ITEM_DICT[code.toLowerCase()];
+  return `${amount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} ${item.name} ${item.emoji}`;
+}
+
+/**
+ * @returns {string[]}
+ */
+function getAllItems() {
+  return Object.keys(ITEM_DICT);
+}
+
+module.exports = { saveItem, editItemPrice, getItemPrice, isSingleItem, formatItem, getAllItems }
