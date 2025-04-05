@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { cachifyFunction } = require('../utils/utils.js');
+const { notifyNewPrice } = require('./ath.js');
 
 async function getLatestClosePrice(ticker) {
   const apiUrl = `https://query1.finance.yahoo.com/v8/finance/chart/${ticker}?includePrePost=true&interval=1m&range=1d`;
@@ -34,7 +35,11 @@ async function getLatestClosePrice(ticker) {
 }
 
 async function getLatestBitcoinPriceUSD() {
-  return await getLatestClosePrice("BTC-USD");
+  const price = await getLatestClosePrice("BTC-USD");
+  
+  // let ath service know
+  notifyNewPrice(price);
+  return price;
 }
 
 async function getLatestTicker(tickerSymbol) {
