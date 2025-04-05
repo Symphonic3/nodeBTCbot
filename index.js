@@ -1,5 +1,6 @@
-const { Client, GatewayIntentBits, Partials, Events } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Events, ActivityType } = require('discord.js');
 const fs = require('fs');
+const { getFancyBitcoinPriceInCurrency } = require('./services/yahoofinance');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 const PREFIX = process.env.BOT_PREFIX || '!';
@@ -20,9 +21,26 @@ for (const file of commandFiles) {
   });
 }
 
+async function updatePresence() {
+  let newPresence = await getFancyBitcoinPriceInCurrency("USD"); // Get the updated presence text
+
+  try {
+    await client.user.setPresence({
+      activities: [{ name: newPresence, type: ActivityType.Watching }],
+      status: 'online',
+    });
+  } catch (error) {
+    console.error("Error updating presence:");
+    console.error(error);
+  }
+}
+
 // Bot is ready
-client.once(Events.ClientReady, () => {
+client.once(Events.ClientReady, async () => {
+  await updatePresence();
   console.log(`✅ Logged in as ${client.user.tag}`);
+  // Set an interval to update the bot's presence every 10 seconds
+  setInterval(updatePresence, 10000);
 });
 
 // Respond to commands
