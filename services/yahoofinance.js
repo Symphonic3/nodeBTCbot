@@ -77,7 +77,7 @@ const iso4217CurrencyCodes = [
 ];
 
 const CURRENCY_FORMAT_DICT = {
-  "USD": { symbol: "$", name: "U.S. Dollar"},
+  "USD": { symbol: "$", name: "USD"},
   "CAD": { symbol: "$", name: "Canadian Dollar"},
   "GBP": { symbol: "£", name: "British Pounds"},
   "EUR": { symbol: "€", name: "Euros"},
