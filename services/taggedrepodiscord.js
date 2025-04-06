@@ -14,17 +14,17 @@ class DiscordRepoWrapper {
 
     const itemname = args[0];
     if (!itemname) {
-      return message.reply("Please specify an item name.");
+      return message.channel.send("Please specify an item name.");
     }
     const tags = args.slice(1);
     if (tags.length === 0) {
-      return message.reply("Please provide at least one tag.");
+      return message.channel.send("Please provide at least one tag.");
     }
     const result = this.repoManager.addRepoItem(itemname, tags);
     if (result) {
-      message.reply(`Item "${itemname}" added with tags: ${tags.join(", ")}`);
+      message.channel.send(`Item "${itemname}" added with tags: ${tags.join(", ")}`);
     } else {
-      message.reply(`Item "${itemname}" already exists.`);
+      message.channel.send(`Item "${itemname}" already exists.`);
     }
   }
 
@@ -34,13 +34,13 @@ class DiscordRepoWrapper {
 
     const itemname = args[0];
     if (!itemname) {
-      return message.reply("Please specify an item name to remove.");
+      return message.channel.send("Please specify an item name to remove.");
     }
     const result = this.repoManager.removeRepoItem(itemname);
     if (result) {
-      message.reply(`Item "${itemname}" removed.`);
+      message.channel.send(`Item "${itemname}" removed.`);
     } else {
-      message.reply(`Item "${itemname}" does not exist.`);
+      message.channel.send(`Item "${itemname}" does not exist.`);
     }
   }
 
@@ -51,13 +51,13 @@ class DiscordRepoWrapper {
     const itemname = args[0];
     const tag = args[1];
     if (!itemname || !tag) {
-      return message.reply("Please specify an item name and a tag to add.");
+      return message.channel.send("Please specify an item name and a tag to add.");
     }
     const result = this.repoManager.addTagToRepoItem(itemname, tag);
     if (result) {
-      message.reply(`Tag "${tag}" added to item "${itemname}".`);
+      message.channel.send(`Tag "${tag}" added to item "${itemname}".`);
     } else {
-      message.reply(
+      message.channel.send(
         `Could not add tag. Either item "${itemname}" doesn't exist or the tag is already present.`
       );
     }
@@ -70,13 +70,13 @@ class DiscordRepoWrapper {
     const itemname = args[0];
     const tag = args[1];
     if (!itemname || !tag) {
-      return message.reply("Please specify an item name and a tag to remove.");
+      return message.channel.send("Please specify an item name and a tag to remove.");
     }
     const result = this.repoManager.removeTagFromRepoItem(itemname, tag);
     if (result) {
-      message.reply(`Tag "${tag}" removed from item "${itemname}".`);
+      message.channel.send(`Tag "${tag}" removed from item "${itemname}".`);
     } else {
-      message.reply(
+      message.channel.send(
         `Could not remove tag. Either item "${itemname}" doesn't exist or the tag isn't present.`
       );
     }
@@ -89,13 +89,13 @@ class DiscordRepoWrapper {
     const itemname = args[0];
     const link = args[1];
     if (!itemname || !link) {
-      return message.reply("Please specify an item name and a link.");
+      return message.channel.send("Please specify an item name and a link.");
     }
     const result = this.repoManager.setRepoItemLink(itemname, link);
     if (result) {
-      message.reply(`Link for item "${itemname}" set to "${link}".`);
+      message.channel.send(`Link for item "${itemname}" set to "${link}".`);
     } else {
-      message.reply(`Could not set link. Item "${itemname}" does not exist.`);
+      message.channel.send(`Could not set link. Item "${itemname}" does not exist.`);
     }
   }
 
@@ -103,7 +103,7 @@ class DiscordRepoWrapper {
   // eslint-disable-next-line no-unused-vars
   async handleGetAllTags(message, args) {
     const tags = this.repoManager.getAllTags();
-    message.reply(`All tags: ${tags.join(", ")}`);
+    message.channel.send(`All tags: ${tags.join(", ")}`);
   }
 
   async handleLookup(message, args) {
@@ -115,7 +115,7 @@ class DiscordRepoWrapper {
       
       // Create a shortened comma-separated list of all wallet names.
       let allItemsList = Object.keys(items).join(", ");
-      return message.reply(`All items: ${allItemsList}`);
+      return message.channel.send(`All items: ${allItemsList}`);
     }
   
     // If tags are specified, perform lookup based on the tags.
@@ -123,7 +123,7 @@ class DiscordRepoWrapper {
   
     // If no items are found, reply accordingly.
     if (Object.keys(items).length === 0) {
-      return message.reply("No matching items found.");
+      return message.channel.send("No matching items found.");
     }
   
     // Format the reply message for the found items.
@@ -135,7 +135,7 @@ class DiscordRepoWrapper {
       }
     }
     
-    message.reply(reply);
+    message.channel.send(reply);
   }
   
 }

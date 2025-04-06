@@ -29,19 +29,19 @@ function getHeadHash() {
 async function versionCommand(message, args) {
   const headHash = getHeadHash();
   if (!headHash) {
-    return message.reply("HEAD log does not exist or cannot be read.");
+    return message.channel.send("HEAD log does not exist or cannot be read.");
   }
 
   const botUrl = `https://github.com/Symphonic3/nodeBTCbot/commit/${headHash}`;
 
   try {
     await axios.get(botUrl); // We only care if it's 200
-    return message.reply(`Bot version: <${botUrl}>`);
+    return message.channel.send(`Bot version: <${botUrl}>`);
   } catch (err) {
     if (err.response && err.response.status === 404) {
-      return message.reply(`HEAD is not pushed to remote. Hash: ${headHash}`);
+      return message.channel.send(`HEAD is not pushed to remote. Hash: ${headHash}`);
     }
-    return message.reply(`Error checking commit: ${err.message}`);
+    return message.channel.send(`Error checking commit: ${err.message}`);
   }
 }
 
