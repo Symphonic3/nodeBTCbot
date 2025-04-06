@@ -3,7 +3,8 @@
 # Usage
  1. Install node v20 or higher & clone the repository
  2. Setup your `.env` based on the example of `example.env`
- 3. Run `node --env-file=.env index.js`
+ 3. Run `npm install`
+ 4. Run `node --env-file=.env index.js`
 # Notes for contributors
  - Note that all module.exports from any file in `commands/` will automatically be registered as commands
  - Extract logic where some data is being provided or manipulated to `services/` where possible
