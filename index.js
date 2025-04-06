@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBui
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
+const { getMemo } = require('./services/memos');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -60,10 +61,13 @@ client.on(Events.MessageCreate, async (message) => {
   // Find the command in the map
   const command = client.commands.get(commandName);
 
-  if (!command) return; // Command doesn't exist
-
   try {
-    await command.execute(message, args);  // Execute the command
+    // Command doesn't exist, try a memo instead
+    if (!command)  {
+      await message.channel.send(getMemo(commandName));
+    } else {
+      await command.execute(message, args);  // Execute the command
+    }
   } catch (error) {
     console.error(error);
     message.channel.send('There was an error executing the command!');
