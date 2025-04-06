@@ -1,22 +1,257 @@
 {
-  "electrum": {"tags": ["pc", "windows", "linux", "mac", "android", "hot", "airgap", "psbt", "timelocks", "recommended", "multisig", "advanced", "lightning", "2fa", "node-compatible", "spv"], "link":"https://electrum.org/"},
-  "sparrow": {"tags": ["pc", "windows", "linux", "mac", "hot", "advanced", "multisig", "node-compatible", "recommended"], "link":"https://sparrowwallet.com/"},
-  "core": {"tags": ["pc", "windows", "linux", "hot", "node", "full-node", "advanced", "recommended"], "link":"https://bitcoincore.org/"},
-  "knots": {"tags": ["pc", "windows", "linux", "hot", "node", "full-node", "advanced", "recommended"], "link":"https://bitcoinknots.org/"},
-  "joinmarket": {"tags": ["pc", "windows", "hot", "privacy", "coinjoin", "recommended"], "link":"https://www.keepitsimplebitcoin.com/joinmarket/"},
-  "coldcard": {"tags": ["hardware", "cold", "requires-wallet", "multisig", "node-compatible", "psbt", "airgap", "recommended"], "link":"https://coldcardwallet.com/"},
-  "green": {"tags": ["android", "ios", "2fa", "pc", "windows", "linux", "mac", "multisig", "hot", "spv"], "link":"https://blockstream.com/green/"},
-  "phoenix": {"tags": ["android", "hot", "lightning", "easy"], "link":"https://phoenix.acinq.co/"},
-  "lnd": {"tags": ["pc", "windows", "linux", "mac", "hot", "node", "lightning", "lightning-node", "node-compatible", "advanced"], "link":"https://github.com/lightningnetwork/lnd/releases"},
-  "c-lightning": {"tags": ["pc", "windows", "linux", "mac", "hot", "node", "lightning", "lightning-node", "node-compatible", "advanced"], "link":"https://github.com/ElementsProject/lightning/releases"},
-  "blue": {"tags": ["android", "ios", "hot", "lightning", "self-custody", "node-compatible", "lightning-node-required", "recommended"], "link":"https://bluewallet.io/"},
-  "seedsigner": {"tags": ["hardware", "airgap", "diy", "cold", "recommended"], "link":"https://seedsigner.com/"},
-  "yeticold": {"tags": ["hardware", "airgap", "diy", "cold", "recommended"], "link":"https://yeticold.com/"},
-  "glacier-protocol": {"tags": ["hardware", "airgap", "diy", "cold"], "link":"https://glacierprotocol.org/"},
-  "krux": {"tags": ["hardware", "airgap", "diy", "cold"], "link":"https://selfcustody.github.io/krux/"},
-  "breez": {"tags": ["android", "ios", "hot", "lightning", "easy", "lsp"], "link":"https://breez.technology/"},
-  "liana": {"tags": ["pc", "mac", "windows", "linux", "hot", "timelocks", "multisig", "cold", "easy", "advanced"], "link":"https://wizardsardine.com/liana/"},
-  "rtl": {"tags": ["pc", "mac", "windows", "linux", "web", "self-hosted", "hot", "lightning-node-required", "advanced"], "link":"https://github.com/Ride-The-Lightning/RTL"},
-  "blixt": {"tags": ["android", "hot", "lightning", "lsp", "easy", "advanced"], "link":"https://blixtwallet.github.io"},
-  "zeus": {"tags": ["android", "ios", "hot", "lightning", "lsp", "lightning-node-required", "advanced"], "link":"https://zeusln.com/"}
+  "electrum": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "mac",
+      "android",
+      "hot",
+      "airgap",
+      "psbt",
+      "timelocks",
+      "recommended",
+      "multisig",
+      "advanced",
+      "lightning",
+      "2fa",
+      "node-compatible",
+      "spv"
+    ],
+    "link": "https://electrum.org/"
+  },
+  "sparrow": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "mac",
+      "hot",
+      "advanced",
+      "multisig",
+      "node-compatible",
+      "recommended"
+    ],
+    "link": "https://sparrowwallet.com/"
+  },
+  "core": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "hot",
+      "node",
+      "full-node",
+      "advanced",
+      "recommended"
+    ],
+    "link": "https://bitcoincore.org/"
+  },
+  "knots": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "hot",
+      "node",
+      "full-node",
+      "advanced",
+      "recommended"
+    ],
+    "link": "https://bitcoinknots.org/"
+  },
+  "joinmarket": {
+    "tags": [
+      "pc",
+      "windows",
+      "hot",
+      "privacy",
+      "coinjoin",
+      "recommended"
+    ],
+    "link": "https://www.keepitsimplebitcoin.com/joinmarket/"
+  },
+  "coldcard": {
+    "tags": [
+      "hardware",
+      "cold",
+      "requires-wallet",
+      "multisig",
+      "node-compatible",
+      "psbt",
+      "airgap",
+      "recommended"
+    ],
+    "link": "https://coldcardwallet.com/"
+  },
+  "green": {
+    "tags": [
+      "android",
+      "ios",
+      "2fa",
+      "pc",
+      "windows",
+      "linux",
+      "mac",
+      "multisig",
+      "hot",
+      "spv"
+    ],
+    "link": "https://blockstream.com/green/"
+  },
+  "phoenix": {
+    "tags": [
+      "android",
+      "hot",
+      "lightning",
+      "easy"
+    ],
+    "link": "https://phoenix.acinq.co/"
+  },
+  "lnd": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "mac",
+      "hot",
+      "node",
+      "lightning",
+      "lightning-node",
+      "node-compatible",
+      "advanced"
+    ],
+    "link": "https://github.com/lightningnetwork/lnd/releases"
+  },
+  "c-lightning": {
+    "tags": [
+      "pc",
+      "windows",
+      "linux",
+      "mac",
+      "hot",
+      "node",
+      "lightning",
+      "lightning-node",
+      "node-compatible",
+      "advanced"
+    ],
+    "link": "https://github.com/ElementsProject/lightning/releases"
+  },
+  "blue": {
+    "tags": [
+      "android",
+      "ios",
+      "hot",
+      "lightning",
+      "self-custody",
+      "node-compatible",
+      "lightning-node-required",
+      "recommended"
+    ],
+    "link": "https://bluewallet.io/"
+  },
+  "seedsigner": {
+    "tags": [
+      "hardware",
+      "airgap",
+      "diy",
+      "cold",
+      "recommended"
+    ],
+    "link": "https://seedsigner.com/"
+  },
+  "yeticold": {
+    "tags": [
+      "hardware",
+      "airgap",
+      "diy",
+      "cold",
+      "recommended"
+    ],
+    "link": "https://yeticold.com/"
+  },
+  "glacier-protocol": {
+    "tags": [
+      "hardware",
+      "airgap",
+      "diy",
+      "cold",
+      "recommended"
+    ],
+    "link": "https://glacierprotocol.org/"
+  },
+  "krux": {
+    "tags": [
+      "hardware",
+      "airgap",
+      "diy",
+      "cold",
+      "recommended"
+    ],
+    "link": "https://selfcustody.github.io/krux/"
+  },
+  "breez": {
+    "tags": [
+      "android",
+      "ios",
+      "hot",
+      "lightning",
+      "easy",
+      "lsp"
+    ],
+    "link": "https://breez.technology/"
+  },
+  "liana": {
+    "tags": [
+      "pc",
+      "mac",
+      "windows",
+      "linux",
+      "hot",
+      "timelocks",
+      "multisig",
+      "cold",
+      "easy",
+      "advanced"
+    ],
+    "link": "https://wizardsardine.com/liana/"
+  },
+  "rtl": {
+    "tags": [
+      "pc",
+      "mac",
+      "windows",
+      "linux",
+      "web",
+      "self-hosted",
+      "hot",
+      "lightning-node-required",
+      "advanced"
+    ],
+    "link": "https://github.com/Ride-The-Lightning/RTL"
+  },
+  "blixt": {
+    "tags": [
+      "android",
+      "hot",
+      "lightning",
+      "lsp",
+      "easy",
+      "advanced"
+    ],
+    "link": "https://blixtwallet.github.io"
+  },
+  "zeus": {
+    "tags": [
+      "android",
+      "ios",
+      "hot",
+      "lightning",
+      "lsp",
+      "lightning-node-required",
+      "advanced"
+    ],
+    "link": "https://zeusln.com/"
+  }
 }

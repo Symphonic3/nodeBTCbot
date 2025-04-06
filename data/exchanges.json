@@ -1,57 +1,349 @@
 {
-  "Bisq": {"tags": ["p2p", "venezuela"], "link": ""},
-  "Robosats": {"tags": ["p2p"], "link": ""},
-  "HodlHodl": {"tags": ["p2p"], "link": ""},
-  "Vexl": {"tags": ["p2p"], "link": ""},
-  "Peach Bitcoin": {"tags": ["p2p"], "link": ""},
-  "Rain": {"tags": ["bahrain", "kuwait", "oman", "saudi arabia", "uae"], "link": ""},
-  "Indodax": {"tags": ["indonesia"], "link": ""},
-  "Bits of Gold": {"tags": ["israel"], "link": ""},
-  "Bitbank": {"tags": ["japan"], "link": ""},
-  "BitFlyer": {"tags": ["japan"], "link": ""},
-  "BtcBox": {"tags": ["japan"], "link": ""},
-  "Luno": {"tags": ["malaysia", "nigeria", "south africa"], "link": ""},
-  "Mine Digital": {"tags": ["singapore", "australia", "new zealand"], "link": ""},
-  "Bithumb": {"tags": ["south korea"], "link": ""},
-  "Coinone": {"tags": ["south korea"], "link": ""},
-  "Korbit": {"tags": ["south korea"], "link": ""},
-  "MaiCoin MAX": {"tags": ["taiwan"], "link": ""},
-  "BitoPro": {"tags": ["taiwan"], "link": ""},
-  "Koinim": {"tags": ["turkey"], "link": ""},
-  "BitOasis": {"tags": ["uae"], "link": ""},
-  "Karsha": {"tags": ["uae"], "link": ""},
-  "Relai": {"tags": ["europe"], "link": ""},
-  "Strike": {"tags": ["europe", "uk", "uganda", "usa"], "link": ""},
-  "Pocketbitcoin": {"tags": ["europe"], "link": ""},
-  "Bitvavo": {"tags": ["netherlands"], "link": ""},
-  "BitBay": {"tags": ["poland"], "link": ""},
-  "Kuna": {"tags": ["ukraine"], "link": ""},
-  "Okcoin": {"tags": ["uk"], "link": ""},
-  "Coincorner": {"tags": ["uk"], "link": ""},
-  "Coinfloor": {"tags": ["uk"], "link": ""},
-  "Cashapp": {"tags": ["uk", "usa"], "link": ""},
-  "BuyCoins": {"tags": ["nigeria"], "link": ""},
-  "BullBitcoin": {"tags": ["canada"], "link": ""},
-  "BitcoinWell": {"tags": ["canada", "usa"], "link": ""},
-  "Bitso": {"tags": ["mexico"], "link": ""},
-  "Volabit": {"tags": ["mexico"], "link": ""},
-  "River Financial": {"tags": ["usa"], "link": ""},
-  "ArgenBTC": {"tags": ["argentina"], "link": ""},
-  "SatoshiTango": {"tags": ["argentina"], "link": ""},
-  "Brasil Bitcoin": {"tags": ["brazil"], "link": ""},
-  "Mercado Bitcoin": {"tags": ["brazil"], "link": ""},
-  "NovaDAX": {"tags": ["brazil"], "link": ""},
-  "Walltime": {"tags": ["brazil"], "link": ""},
-  "Buda": {"tags": ["chile", "colombia", "peru"], "link": ""},
-  "Cryptobuyer": {"tags": ["venezuela"], "link": ""},
-  "Bitaroo": {"tags": ["australia"], "link": ""},
-  "BTC Markets": {"tags": ["australia"], "link": ""},
-  "CoinJar": {"tags": ["australia"], "link": ""},
-  "CoinSpot": {"tags": ["australia"], "link": ""},
-  "Digital Surge": {"tags": ["australia"], "link": ""},
-  "CoinTree": {"tags": ["australia"], "link": ""},
-  "HardBlock": {"tags": ["australia"], "link": ""},
-  "Independent Reserve": {"tags": ["australia", "new zealand"], "link": ""},
-  "Swyftx": {"tags": ["australia"], "link": ""},
-  "Kiwi-coin": {"tags": ["new zealand"], "link": ""}
+  "Bisq": {
+    "tags": [
+      "p2p",
+      "venezuela"
+    ],
+    "link": ""
+  },
+  "Robosats": {
+    "tags": [
+      "p2p"
+    ],
+    "link": ""
+  },
+  "HodlHodl": {
+    "tags": [
+      "p2p"
+    ],
+    "link": ""
+  },
+  "Vexl": {
+    "tags": [
+      "p2p"
+    ],
+    "link": ""
+  },
+  "Peach Bitcoin": {
+    "tags": [
+      "p2p"
+    ],
+    "link": ""
+  },
+  "Rain": {
+    "tags": [
+      "bahrain",
+      "kuwait",
+      "oman",
+      "saudi arabia",
+      "uae"
+    ],
+    "link": ""
+  },
+  "Indodax": {
+    "tags": [
+      "indonesia"
+    ],
+    "link": ""
+  },
+  "Bits of Gold": {
+    "tags": [
+      "israel"
+    ],
+    "link": ""
+  },
+  "Bitbank": {
+    "tags": [
+      "japan"
+    ],
+    "link": ""
+  },
+  "BitFlyer": {
+    "tags": [
+      "japan"
+    ],
+    "link": ""
+  },
+  "BtcBox": {
+    "tags": [
+      "japan"
+    ],
+    "link": ""
+  },
+  "Luno": {
+    "tags": [
+      "malaysia",
+      "nigeria",
+      "south africa"
+    ],
+    "link": ""
+  },
+  "Mine Digital": {
+    "tags": [
+      "singapore",
+      "australia",
+      "new zealand"
+    ],
+    "link": ""
+  },
+  "Bithumb": {
+    "tags": [
+      "south korea"
+    ],
+    "link": ""
+  },
+  "Coinone": {
+    "tags": [
+      "south korea"
+    ],
+    "link": ""
+  },
+  "Korbit": {
+    "tags": [
+      "south korea"
+    ],
+    "link": ""
+  },
+  "MaiCoin MAX": {
+    "tags": [
+      "taiwan"
+    ],
+    "link": ""
+  },
+  "BitoPro": {
+    "tags": [
+      "taiwan"
+    ],
+    "link": ""
+  },
+  "Koinim": {
+    "tags": [
+      "turkey"
+    ],
+    "link": ""
+  },
+  "BitOasis": {
+    "tags": [
+      "uae"
+    ],
+    "link": ""
+  },
+  "Karsha": {
+    "tags": [
+      "uae"
+    ],
+    "link": ""
+  },
+  "Relai": {
+    "tags": [
+      "europe"
+    ],
+    "link": ""
+  },
+  "Strike": {
+    "tags": [
+      "europe",
+      "uk",
+      "uganda",
+      "usa"
+    ],
+    "link": ""
+  },
+  "Pocketbitcoin": {
+    "tags": [
+      "europe"
+    ],
+    "link": ""
+  },
+  "Bitvavo": {
+    "tags": [
+      "netherlands"
+    ],
+    "link": ""
+  },
+  "BitBay": {
+    "tags": [
+      "poland"
+    ],
+    "link": ""
+  },
+  "Kuna": {
+    "tags": [
+      "ukraine"
+    ],
+    "link": ""
+  },
+  "Okcoin": {
+    "tags": [
+      "uk"
+    ],
+    "link": ""
+  },
+  "Coincorner": {
+    "tags": [
+      "uk"
+    ],
+    "link": ""
+  },
+  "Coinfloor": {
+    "tags": [
+      "uk"
+    ],
+    "link": ""
+  },
+  "Cashapp": {
+    "tags": [
+      "uk",
+      "usa"
+    ],
+    "link": ""
+  },
+  "BuyCoins": {
+    "tags": [
+      "nigeria"
+    ],
+    "link": ""
+  },
+  "BullBitcoin": {
+    "tags": [
+      "canada"
+    ],
+    "link": "https://www.bullbitcoin.com/"
+  },
+  "BitcoinWell": {
+    "tags": [
+      "canada",
+      "usa"
+    ],
+    "link": ""
+  },
+  "Bitso": {
+    "tags": [
+      "mexico"
+    ],
+    "link": ""
+  },
+  "Volabit": {
+    "tags": [
+      "mexico"
+    ],
+    "link": ""
+  },
+  "River Financial": {
+    "tags": [
+      "usa"
+    ],
+    "link": ""
+  },
+  "ArgenBTC": {
+    "tags": [
+      "argentina"
+    ],
+    "link": ""
+  },
+  "SatoshiTango": {
+    "tags": [
+      "argentina"
+    ],
+    "link": ""
+  },
+  "Brasil Bitcoin": {
+    "tags": [
+      "brazil"
+    ],
+    "link": ""
+  },
+  "Mercado Bitcoin": {
+    "tags": [
+      "brazil"
+    ],
+    "link": ""
+  },
+  "NovaDAX": {
+    "tags": [
+      "brazil"
+    ],
+    "link": ""
+  },
+  "Walltime": {
+    "tags": [
+      "brazil"
+    ],
+    "link": ""
+  },
+  "Buda": {
+    "tags": [
+      "chile",
+      "colombia",
+      "peru"
+    ],
+    "link": ""
+  },
+  "Cryptobuyer": {
+    "tags": [
+      "venezuela"
+    ],
+    "link": ""
+  },
+  "Bitaroo": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "BTC Markets": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "CoinJar": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "CoinSpot": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "Digital Surge": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "CoinTree": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "HardBlock": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "Independent Reserve": {
+    "tags": [
+      "australia",
+      "new zealand"
+    ],
+    "link": ""
+  },
+  "Swyftx": {
+    "tags": [
+      "australia"
+    ],
+    "link": ""
+  },
+  "Kiwi-coin": {
+    "tags": [
+      "new zealand"
+    ],
+    "link": ""
+  }
 }
