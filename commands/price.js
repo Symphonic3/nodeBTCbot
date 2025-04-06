@@ -65,6 +65,17 @@ async function price(message, args) {
   }
 }
 
+const btcUnits = {
+  MSAT: { price: 100000000, symbol: "msat" },
+  SAT: { price: 100000000, symbol: "sat" },
+  SATS: { price: 100000000, symbol: "sats" },
+  UBTC: { price: 1000000, symbol: "μBTC" },
+  MBTC: { price: 1000, symbol: "mBTC" },
+  CBTC: { price: 100, symbol: "cBTC" },
+  DBTC: { price: 10, symbol: "dBTC" },
+  BTC: { price: 1, symbol: "BTC" }
+};
+
 async function convert(message, args) {
   if (args.length == 1) {
     await message.channel.send('To use convert use the format: !convert 15.00 USD BTC or !convert 10000 sat mBTC');
@@ -84,21 +95,24 @@ async function convert(message, args) {
   const a = args[1].toUpperCase();
   const itemPriceA = getItemPrice(a.toLowerCase());
   
-  if (isNaN(itemPriceA) && isNaN(await getBitcoinPriceInCurrency(a))) {
+  if (!btcUnits[a] && isNaN(itemPriceA) && isNaN(await getBitcoinPriceInCurrency(a))) {
     await message.channel.send('Invalid symbol.');
     return;
   } 
 
   const b = args[2].toUpperCase();
   const itemPriceB = getItemPrice(b.toLowerCase());
-  if (isNaN(itemPriceB) && isNaN(await getBitcoinPriceInCurrency(b))) {
+  if (!btcUnits[b] && isNaN(itemPriceB) && isNaN(await getBitcoinPriceInCurrency(b))) {
     await message.channel.send('Invalid symbol.');
     return;
   }
 
   let nBitcoin;
 
-  if (isNaN(itemPriceA)) {
+  if (btcUnits[a]) {
+    // A is a btc unit
+    nBitcoin = amount * 1 / btcUnits[a].price;
+  } else if (isNaN(itemPriceA)) {
     // A is a currency
     nBitcoin = amount * 1 / (await getBitcoinPriceInCurrency(a));
   } else {
@@ -108,7 +122,10 @@ async function convert(message, args) {
 
   let formattedB;
 
-  if (isNaN(itemPriceB)) {
+  if (btcUnits[b]) {
+    // B is a btc unit
+    formattedB = (nBitcoin * btcUnits[b].price).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + " " + btcUnits[b].symbol;
+  } else if (isNaN(itemPriceB)) {
     // B is a currency
     formattedB = formatCurrency(nBitcoin * (await getBitcoinPriceInCurrency(b)), b);
   } else {
@@ -116,7 +133,9 @@ async function convert(message, args) {
     formattedB = formatItem(nBitcoin / (itemPriceB / (await getBitcoinPriceUSD())), b.toLowerCase());
   }
 
-  const formattedA = isNaN(itemPriceA) ? formatCurrency(amount, a) : formatItem(amount, a.toLowerCase());
+  const formattedA = btcUnits[a] ?
+    (nBitcoin * btcUnits[a].price).toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 8 }) + " " + btcUnits[a].symbol :
+    (isNaN(itemPriceA) ? formatCurrency(amount, a) : formatItem(amount, a.toLowerCase()));
 
   await worth(message, formattedA, formattedB);
 }
