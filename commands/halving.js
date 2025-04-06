@@ -30,4 +30,7 @@ module.exports = {
   halving: {
     execute: halvingCommand,
   },
+  halvening: {
+    execute: halvingCommand
+  }
 };
