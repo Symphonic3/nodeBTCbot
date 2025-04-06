@@ -51,9 +51,7 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
     last_edited_by: lastEditedBy,
   };
 
-  return {
-    success: `Successfully ${mode === "add" ? "added" : "edited"} item: ${name} with value $${cost}`,
-  };
+  return `Successfully ${mode === "add" ? "added" : "edited"} item: ${name} with value $${cost}`;
 }
 
 /**
