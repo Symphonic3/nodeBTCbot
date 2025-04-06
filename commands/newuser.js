@@ -19,5 +19,8 @@ async function welcomeNewUser(message, args) {
 module.exports = {
   newuser: {
     execute: welcomeNewUser
+  },
+  welcome: {
+    execute: welcomeNewUser
   }
 };
