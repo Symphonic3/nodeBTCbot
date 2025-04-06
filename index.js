@@ -3,6 +3,7 @@ const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 const { getMemo } = require('./services/memos');
+const { get } = require('http');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -63,8 +64,8 @@ client.on(Events.MessageCreate, async (message) => {
 
   try {
     // Command doesn't exist, try a memo instead
-    if (!command)  {
-      await message.channel.send(getMemo(commandName));
+    if (!command) {
+      await client.commands.get("memo").execute(message, [commandName]);
     } else {
       await command.execute(message, args);  // Execute the command
     }

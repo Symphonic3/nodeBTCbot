@@ -37,7 +37,16 @@ async function removeMemoCommand(message, args) {
 async function getMemoCommand(message, args) {
   const title = args[0];
   const result = getMemo(title);
-  await message.channel.send(result);
+  let user = '';
+  if (message.reference) {
+    try {
+      const repliedMsg = await message.channel.messages.fetch(message.reference.messageId);
+      user = `${repliedMsg.author}\n`;
+    } catch (err) {
+      console.error("Could not fetch replied message:", err);
+    }
+  }
+  await message.channel.send(`${user}${result}`);
 }
 
 // Get Raw Memo Command
