@@ -97,7 +97,7 @@ client.on('messageCreate', async (message) => {
 
     // Remove blacklisted content
     if (process.env.ENABLE_BLACKLIST === '1') {
-      if (!message.member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE) && message.author.id !== client.user.id) {
+      if (!message.member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE) && message.author.id !== client.user.id) {
         const blacklist = process.env.BLACKLIST.split(',').filter(item => item);
         for (let item of blacklist) {
           if (message.content.toLowerCase().includes(item)) {
@@ -111,7 +111,7 @@ client.on('messageCreate', async (message) => {
 
     // Remove disallowed content from image-only channels
     if (process.env.ENABLE_IMAGEONLY === '1' && message.channel.name === process.env.IMAGEONLY_CHANNEL) {
-      if (!message.member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
+      if (!message.member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
         if (message.content.includes('tenor.com') || message.content.includes('youtube.com') || message.content.includes('reddit.com') || message.content.includes('youtu.be.com')) {
           console.log('whitelist meme');
           return client.processCommands(message);
