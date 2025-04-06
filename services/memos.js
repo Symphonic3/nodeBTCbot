@@ -62,4 +62,8 @@ function memosList() {
   return "Memos: " + titles.join(", ");
 }
 
-module.exports = { addMemo, removeMemo, editMemo, getMemo, memosList }
+function isMemo(title) {
+  return MEMOS[title];
+}
+
+module.exports = { addMemo, removeMemo, editMemo, getMemo, memosList, isMemo }

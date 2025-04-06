@@ -2,6 +2,7 @@ const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBui
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
+const { isMemo } = require('./services/memos');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -67,7 +68,8 @@ client.on(Events.MessageCreate, async (message) => {
   try {
     // Command doesn't exist, try a memo instead
     if (!command) {
-      await client.commands.get("memo").execute(message, [commandName]);
+      if (isMemo(commandName))
+        await client.commands.get("memo").execute(message, [commandName]);
     } else {
       await command.execute(message, args);  // Execute the command
     }
