@@ -10,7 +10,7 @@ const modRole = process.env.MOD_ROLE;
  * @param {Message} message 
  */
 async function checkDataEdit(message) {
-  const hasPermission = message.member?.roles?.cache.some(role => editDataRoles.includes(role.id));
+  const hasPermission = message.member?.roles?.cache?.some(role => editDataRoles.includes(role.id));
 
   if (!hasPermission) {
     // No permission to proceed
@@ -26,7 +26,7 @@ async function checkDataEdit(message) {
  * @param {Message} message 
  */
 async function checkMod(message) {
-  const hasPermission = message.member?.roles?.cache.some(role => role.name === modRole);
+  const hasPermission = message.member?.roles?.cache?.some(role => role.name === modRole);
 
   if (!hasPermission) {
     // No permission to proceed

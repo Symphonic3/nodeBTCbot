@@ -7,7 +7,7 @@ async function banCommand(message, args) {
 
   // Ban all mentioned members
   for (const member of message.mentions.members.values()) {
-    if (member.roles.cache.some(role => role.name === process.env.MOD_ROLE)) {
+    if (member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
       await message.channel.send("Can't ban mods");
     } else {
       try {
@@ -29,7 +29,7 @@ async function banCommand(message, args) {
         // Fetch the member from the guild
         const member = await message.guild.members.fetch(userId).catch(() => null);
         if (member) {
-          if (member.roles.cache.some(role => role.name === process.env.MOD_ROLE)) {
+          if (member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
             await message.channel.send("Can't ban mods");
           } else {
             await message.guild.members.ban(userId);
@@ -88,7 +88,7 @@ async function banAfterCommand(message, args) {
   for (const msg of messagesInRange.values()) {
     // Skip messages without a guild member
     if (!msg.member) continue;
-    if (msg.member.roles.cache.some(role => role.name === process.env.MOD_ROLE)) {
+    if (msg.member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
       await message.channel.send("Can't ban mods");
     } else {
       try {
