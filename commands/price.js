@@ -88,12 +88,8 @@ function countTrailingZeroes(num) {
 }
 
 async function convert(message, args) {
-  if (args.length == 1) {
+  if (args.length < 3) {
     await message.channel.send('To use convert use the format: !convert 15.00 USD BTC or !convert 10000 sat mBTC');
-    return;
-  }
-  if (!args.length == 3) {
-    await message.channel.send('Invalid format.');
     return;
   }
 
