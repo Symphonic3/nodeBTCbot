@@ -99,27 +99,26 @@ class DiscordRepoWrapper {
     }
   }
 
-  // Expects: !alltags (no arguments)
   // eslint-disable-next-line no-unused-vars
-  async handleGetAllTags(message, args) {
-    const tags = this.repoManager.getAllTags();
-    await message.channel.send(`All tags: ${tags.join(", ")}`);
+  async handleGetAllItems(message, args) {
+    let items = this.repoManager.lookup(); // This should return all items.
+      
+    // Create a shortened comma-separated list of all wallet names.
+    let allItemsList = Object.keys(items).join(", ");
+    return await message.channel.send(`All items: ${allItemsList}`);
   }
 
   async handleLookup(message, args) {
     // If no tags are specified, get a list of all items.
-    let items;
     if (args.length === 0) {
-      // If no arguments (tags) are passed, get all items.
-      items = this.repoManager.lookup(); // This should return all items.
-      
-      // Create a shortened comma-separated list of all wallet names.
-      let allItemsList = Object.keys(items).join(", ");
-      return await message.channel.send(`All items: ${allItemsList}`);
+      // If no arguments (tags) are passed, get all tags.
+      const tags = this.repoManager.getAllTags();
+      await message.channel.send(`All tags: ${tags.join(", ")}`);
+      return;
     }
   
     // If tags are specified, perform lookup based on the tags.
-    items = this.repoManager.lookup(args);
+    const items = this.repoManager.lookup(args);
   
     // If no items are found, reply accordingly.
     if (Object.keys(items).length === 0) {
