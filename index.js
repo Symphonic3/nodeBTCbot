@@ -49,10 +49,14 @@ client.on(Events.MessageCreate, async (message) => {
   if (!message.content.startsWith(client.prefix) || message.author.bot) return;
 
   // Isolates arguments in quotation marks as one argument while allowing escaping ( \" or \' )
-  const args = message.content
+  const preArgs = message.content
     .slice(client.prefix.length)
     .trim()
-    .match(/(?:[^\s"]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')+/g)
+    .match(/(?:[^\s"]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')+/g);
+
+  if (preArgs == null) return;
+
+  const args = preArgs
     .map(arg => arg.replace(/^['"]|['"]$/g, '')); // Removes surrounding quotes if present
 
   const commandName = args.shift().toLowerCase();
