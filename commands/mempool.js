@@ -7,7 +7,7 @@ async function mempoolCommand(message, args) {
   try {
     const response = await axios.get(api);
     data = response.data;
-  } catch (err) {
+  } catch {
     return message.channel.send("Unable to parse mempool data. Try again later.");
   }
 
