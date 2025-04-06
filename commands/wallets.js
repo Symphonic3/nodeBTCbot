@@ -26,4 +26,7 @@ module.exports = {
   walletsetlink: {
     execute: discordRepo.handleSetLink.bind(discordRepo)
   },
+  wallettags: {
+    execute: discordRepo.handleGetAllTags.bind(discordRepo)
+  }
 }

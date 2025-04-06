@@ -26,4 +26,7 @@ module.exports = {
   exchangesetlink: {
     execute: discordRepo.handleSetLink.bind(discordRepo)
   },
+  exchangetags: {
+    execute: discordRepo.handleGetAllTags.bind(discordRepo)
+  }
 }
