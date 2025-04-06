@@ -2,8 +2,6 @@ const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBui
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
-const { getMemo } = require('./services/memos');
-const { get } = require('http');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
