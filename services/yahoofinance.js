@@ -119,7 +119,7 @@ function formatCurrency(amount, currency) {
   if (CURRENCY_FORMAT_DICT[currencyUpper]) {
     const { symbol, name } = CURRENCY_FORMAT_DICT[currencyUpper];
 
-    const formattedAmount = amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    const formattedAmount = amount?.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',') ?? 0;
     return `${symbol}${formattedAmount} ${name}`;
   }
 
