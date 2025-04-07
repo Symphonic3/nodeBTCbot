@@ -116,7 +116,7 @@ client.on('messageCreate', async (message) => {
       if (!message.member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
         if (message.content.includes('tenor.com') || message.content.includes('youtube.com') || message.content.includes('reddit.com') || message.content.includes('youtu.be.com')) {
           console.log('whitelist meme');
-          return client.processCommands(message);
+          return;
         } else {
           let imageFound = message.attachments.some(a => a.width);
           if (message.attachments.size < 1 || !imageFound) {
