@@ -19,18 +19,9 @@ async function getLatestClosePrice(ticker) {
     if (ticker.toUpperCase() == "BTC-USD") {
       notifyNewPrice(result.meta.fiftyTwoWeekHigh);
     }
-    const indicators = result.indicators.quote[0];
-    const closePrices = indicators.close;
+    
+    return result.meta.regularMarketPrice;
 
-    // Loop through the array of close prices in reverse and find the first non-null value
-    for (let i = closePrices.length - 1; i >= 0; i--) {
-      if (closePrices[i] !== null) {
-        return closePrices[i];
-      }
-    }
-
-    // If no non-null value found, return null
-    return null;
   } catch (error) {
     console.error('Error fetching or processing the data:', error.message);
     return null;
