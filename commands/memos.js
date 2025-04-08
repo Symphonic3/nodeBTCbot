@@ -85,4 +85,7 @@ module.exports = {
   memolist: {
     execute: memosListCommand
   },
+  memos: {
+    execute: memosListCommand
+  },
 };
