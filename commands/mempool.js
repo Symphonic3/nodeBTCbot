@@ -78,7 +78,7 @@ async function mempoolCommand(message, args) {
 
   // Build the message string with a code block
   const messageString = `\`\`\`
-Blockstream's mempool has ${formattedCount} TX and is ${formattedSize} MB
+Blockstream's mempool has ${formattedCount} TX and is ${formattedSize} vMB
 Total fees in mempool are ${formattedFees} BTC
 The tip of the mempool (${range01}MB) ranges between ${range0bottomMB} sat/vbyte and ${range0topMB} sat/vbyte
 ${range10}MB - ${range11}MB = ${range1bottomMB}-${range1topMB} sat/vbyte
