@@ -17,8 +17,8 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
   if (!["add", "edit"].includes(mode)) {
     return "Invalid mode. Use 'add' or 'edit'.";
   }
-  if (!code || code.length < 3 || code.length > 4) {
-    return "Please use a calling code that is 3-4 characters.";
+  if (!code || code.length < 3 || code.length > 5) {
+    return "Please use a calling code that is 3-5 characters.";
   }
 
   const cost = parseFloat(price);
