@@ -482,5 +482,19 @@
     "emoji": ":nest_with_eggs:",
     "single": false,
     "last_edited_by": "0x15aac"
+  },
+  "mia": {
+    "cost": 45000,
+    "name": "Mazda Miata RF",
+    "emoji": ":race_car:",
+    "single": true,
+    "last_edited_by": "crooooww"
+  },
+  "mata": {
+    "cost": 10000,
+    "name": "1989 Mazda Miata MX-5",
+    "emoji": ":red_car:",
+    "single": true,
+    "last_edited_by": "keebaque"
   }
 }

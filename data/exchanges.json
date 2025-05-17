@@ -4,19 +4,19 @@
       "p2p",
       "venezuela"
     ],
-    "link": ""
+    "link": "https://bisq.network/"
   },
   "Robosats": {
     "tags": [
       "p2p"
     ],
-    "link": ""
+    "link": "https://learn.robosats.org/"
   },
   "HodlHodl": {
     "tags": [
       "p2p"
     ],
-    "link": ""
+    "link": "https://hodlhodl.com/"
   },
   "Vexl": {
     "tags": [
@@ -206,7 +206,9 @@
   },
   "BullBitcoin": {
     "tags": [
-      "canada"
+      "canada",
+      "europe",
+      "costa rica"
     ],
     "link": "https://www.bullbitcoin.com/"
   },
