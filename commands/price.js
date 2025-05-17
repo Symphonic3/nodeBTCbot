@@ -10,6 +10,16 @@ async function price(message, args) {
   }
 
   let unit = args.length > 0 ? args[0].toUpperCase() : "USD";
+  if (unit === "BTC") {
+    await worth(message, "1 bitcoin", "1 bitcoin");
+    return;
+  }
+
+  if (unit === "SAT") {
+    await worth(message, "1 bitcoin", "100,000,000 satoshi");
+    return;
+  }
+ 
   const itemPrice = getItemPrice(unit.toLowerCase());
 
   if (isNaN(itemPrice) && isNaN((await getBitcoinPriceInCurrency(unit)))) {
