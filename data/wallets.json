@@ -84,21 +84,6 @@
     ],
     "link": "https://coldcardwallet.com/"
   },
-  "green": {
-    "tags": [
-      "android",
-      "ios",
-      "2fa",
-      "pc",
-      "windows",
-      "linux",
-      "mac",
-      "multisig",
-      "hot",
-      "spv"
-    ],
-    "link": "https://blockstream.com/green/"
-  },
   "phoenix": {
     "tags": [
       "android",
@@ -230,17 +215,6 @@
       "advanced"
     ],
     "link": "https://github.com/Ride-The-Lightning/RTL"
-  },
-  "blixt": {
-    "tags": [
-      "android",
-      "hot",
-      "lightning",
-      "lsp",
-      "easy",
-      "advanced"
-    ],
-    "link": "https://blixtwallet.github.io"
   },
   "zeus": {
     "tags": [

@@ -496,5 +496,12 @@
     "emoji": ":red_car:",
     "single": true,
     "last_edited_by": "keebaque"
+  },
+  "kbh": {
+    "cost": 10000000,
+    "name": "Kahoobb's Soul",
+    "emoji": ":hearts:",
+    "single": true,
+    "last_edited_by": "hxperant"
   }
 }
