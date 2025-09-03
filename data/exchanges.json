@@ -206,7 +206,6 @@
   },
   "BullBitcoin": {
     "tags": [
-      "canada",
       "europe",
       "costa rica"
     ],
@@ -347,5 +346,17 @@
       "new zealand"
     ],
     "link": ""
+  },
+  "Beaver Bitcoin": {
+    "tags": [
+      "canada"
+    ],
+    "link": "https://www.beaverbitcoin.com/"
+  },
+  "coinfinity": {
+    "tags": [
+      "europe"
+    ],
+    "link": "https://coinfinity.co/"
   }
 }

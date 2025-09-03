@@ -212,10 +212,11 @@
     "last_edited_by": "0x15aac"
   },
   "m&c": {
-    "cost": 2.69,
-    "name": "mac & cheese boxes",
+    "cost": 0.79,
+    "name": "KD Mac & Cheese boxes",
     "emoji": ":cheese:",
-    "single": false
+    "single": false,
+    "last_edited_by": "mrrgnome"
   },
   "jbc": {
     "cost": 2.99,
@@ -491,10 +492,10 @@
     "last_edited_by": "crooooww"
   },
   "mata": {
-    "cost": 10000,
-    "name": "1989 Mazda Miata MX-5",
-    "emoji": ":red_car:",
-    "single": true,
+    "cost": -1,
+    "name": "remove",
+    "emoji": "",
+    "single": false,
     "last_edited_by": "keebaque"
   },
   "kbh": {
@@ -503,5 +504,61 @@
     "emoji": ":hearts:",
     "single": true,
     "last_edited_by": "hxperant"
+  },
+  "miat": {
+    "cost": 10000,
+    "name": "1989 Mazda Miata MX-5",
+    "emoji": ":red_car:",
+    "single": true,
+    "last_edited_by": "keebaque"
+  },
+  "mbk": {
+    "cost": 0,
+    "name": "Meth's Block",
+    "emoji": ":no_entry_sign:",
+    "single": true,
+    "last_edited_by": "lunatheghost"
+  },
+  "dsl": {
+    "cost": 3.82,
+    "name": "gallons of diesel",
+    "emoji": ":fuelpump:",
+    "single": false,
+    "last_edited_by": "methfred"
+  },
+  "gas": {
+    "cost": 3,
+    "name": "gallons of gasoline",
+    "emoji": ":fuelpump:",
+    "single": false,
+    "last_edited_by": "methfred"
+  },
+  "suv": {
+    "cost": 119000,
+    "name": "Premium Luxury Cadillac Escalade",
+    "emoji": ":red_car:",
+    "single": true,
+    "last_edited_by": "methfred"
+  },
+  "car": {
+    "cost": 31000,
+    "name": "Toyota Camry Hybrid",
+    "emoji": ":blue_car:",
+    "single": true,
+    "last_edited_by": "methfred"
+  },
+  "bmw": {
+    "cost": 123000,
+    "name": "BMW M5 G90 (2025)",
+    "emoji": "",
+    "single": false,
+    "last_edited_by": "toxicmaximalist"
+  },
+  "debt": {
+    "cost": 37065000000000,
+    "name": "US National Debt",
+    "emoji": ":money_with_wings:",
+    "single": true,
+    "last_edited_by": "methfred"
   }
 }
