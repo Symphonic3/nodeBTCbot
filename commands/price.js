@@ -65,12 +65,6 @@ async function price(message, args) {
   }
 }
 
-async function price_soon(message, args) {
-  let unit = args.length > 0 ? args[0].toUpperCase() : "USD";
-  const price = await getBitcoinPriceInCurrency(unit);
-  await worth(message, "1 bitcoin", formatCurrency(price * 1.5, unit));
-}
-
 const btcUnits = {
   MSAT: { price: 100000000, symbol: "msat" },
   SAT: { price: 100000000, symbol: "sat" },
@@ -203,8 +197,5 @@ module.exports = {
   },
   wage: {
     execute: wage
-  },
-  price_soon: {
-    execute: price_soon
   }
 }
