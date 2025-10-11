@@ -185,6 +185,7 @@ async function wage(message, args) {
 async function worth(message, a, b) {
   await message.channel.send(`**${a}** is worth **${b}**`);
 }
+
 module.exports = {
   price: {
     execute: price
