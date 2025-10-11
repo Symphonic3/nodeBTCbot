@@ -37,7 +37,7 @@ async function price(message, args) {
       } else {
         // usd/bitcoin / usd/item = item/bitcoin
         const itemAmount = bitcoinPrice / itemPrice;
-        await worth(message, "1 bitcoin soon™", formatItem(itemAmount, unit.toLowerCase()));
+        await worth(message, "1 bitcoin", formatItem(itemAmount, unit.toLowerCase()));
       }
     }
   } else {
@@ -68,7 +68,7 @@ async function price(message, args) {
 async function price_soon(message, args) {
   let unit = args.length > 0 ? args[0].toUpperCase() : "USD";
   const price = await getBitcoinPriceInCurrency(unit);
-  await worth(message, "1 bitcoin", formatCurrency(price * 1.5, unit));
+  await worth(message, "1 bitcoin soon™", formatCurrency(price * 1.5, unit));
 }
 
 const btcUnits = {
