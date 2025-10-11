@@ -37,7 +37,7 @@ async function price(message, args) {
       } else {
         // usd/bitcoin / usd/item = item/bitcoin
         const itemAmount = bitcoinPrice / itemPrice;
-        await worth(message, "1 bitcoin", formatItem(itemAmount, unit.toLowerCase()));
+        await worth(message, "1 bitcoin soon™", formatItem(itemAmount, unit.toLowerCase()));
       }
     }
   } else {
@@ -191,6 +191,7 @@ async function wage(message, args) {
 async function worth(message, a, b) {
   await message.channel.send(`**${a}** is worth **${b}**`);
 }
+
 module.exports = {
   price: {
     execute: price
