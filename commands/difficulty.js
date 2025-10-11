@@ -12,7 +12,7 @@ async function getDifficulty(message) {
       throw new Error("Unexpected response format or empty data");
     }
 
-    const latest = data[data.length - 1];
+    const latest = data[0];
     const [_timestamp, _blockHeight, difficultyRaw, diffRatio] = latest;
     const difficultyTrillions = difficultyRaw / 1e12;
 
