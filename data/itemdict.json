@@ -560,5 +560,19 @@
     "emoji": ":money_with_wings:",
     "single": true,
     "last_edited_by": "methfred"
+  },
+  "dom": {
+    "cost": 600,
+    "name": "Dom Pérignon",
+    "emoji": ":champagne:",
+    "single": false,
+    "last_edited_by": "mrrgnome"
+  },
+  "lmbo": {
+    "cost": 250000,
+    "name": "Lamborghini Huracan (2024)",
+    "emoji": ":🏎️:",
+    "single": true,
+    "last_edited_by": "toxicmaximalist"
   }
 }
