@@ -173,7 +173,8 @@ client.on('guildMemberAdd', async (member) => {
 client.on('messageDelete', async (message) => {
   if (process.env.ENABLE_DELETE_LOG === "1") {
     try {
-      if (message.content == null) return;
+      if (message.content == null || message.guild == null)
+        return;
       const reportChannel = message.guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
       if (reportChannel && message.channel.id !== reportChannel.id) {
         const msg = `new message deleted: ${message.content} - ${message.author}`;
