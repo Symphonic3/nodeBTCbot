@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-unused-vars
 const { Message } = require('discord.js');
+const { getAsDurationMs } = require('./utils');
 
 const editDataRoles = process.env.EDIT_DATA_ROLES;
 const modRole = process.env.MOD_ROLE;
@@ -88,11 +89,23 @@ async function extractIds(message, args) {
 }
 
 function matchSnowflake(str) {
+  return str.match(/^(\d{17,19})$/);
+}
+
+function matchSnowflakeOrPing(str) {
   return str.match(/(\d{17,19})/);
 }
 
 function extractReason(args) {
-  return args.filter(arg => !matchSnowflake(arg)).join(" ");
+  return args.filter(arg => !matchSnowflakeOrPing(arg)).join(" ");
+}
+
+function extractReasonWithoutDuration(args) {
+  return args.filter(arg => !matchSnowflakeOrPing(arg)).slice(1).join(" ");
+}
+
+function extractDuration(args) {
+  return getAsDurationMs(args.filter(arg => !matchSnowflakeOrPing(arg))[0]);
 }
 
 class Reason {
@@ -138,4 +151,4 @@ class Reason {
   }
 }
 
-module.exports = { checkDataEdit, checkMod, extractMembers, extractIds, extractReason, Reason }
+module.exports = { checkDataEdit, checkMod, extractMembers, extractIds, extractReason, extractDuration, extractReasonWithoutDuration, Reason }

@@ -3,6 +3,7 @@ const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 const { isMemo } = require('./services/memos');
+const { initMutes } = require('./services/mutes');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -40,6 +41,9 @@ async function updatePresence() {
 // Bot is ready
 client.once(Events.ClientReady, async () => {
   await updatePresence();
+  for (let guild of client.guilds.cache.values()) {
+    initMutes(guild);
+  }
   console.log(`✅ Logged in as ${client.user.tag}`);
   // Set an interval to update the bot's presence every 10 seconds
   setInterval(updatePresence, 10000);
