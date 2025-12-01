@@ -2,66 +2,24 @@ const { getItemPrice, isSingleItem, formatItem, getAllItems } = require("../serv
 const { getBitcoinPriceInCurrency, formatCurrency, getBitcoinPriceUSD } = require("../services/yahoofinance");
  
 async function price(message, args) {
-  if (args.length == 1 && args[0].toLowerCase() == 'help') {
-    await message.channel.send('**Currency Examples**: !p gbp, !p cad, !p xau');
-    await message.channel.send(`**Other Supported Items:** ${getAllItems().join(', ')}`);
-    await message.channel.send("**!p <item> sats** will give you the cost of the item in satoshis");
-    return;
-  }
-
-  let unit = args.length > 0 ? args[0].toUpperCase() : "USD";
-  const itemPrice = getItemPrice(unit.toLowerCase());
-
-  if (isNaN(itemPrice) && isNaN((await getBitcoinPriceInCurrency(unit)))) {
-    await message.channel.send('Invalid symbol.');
-    return;
-  } 
-
-  if (args[1] == undefined || !args[1].toLowerCase().startsWith('sat')) {
-    // Normal pricing
-
-    if (isNaN(itemPrice)) {
-      // It must be a currency
-      const price = await getBitcoinPriceInCurrency(unit);
-  
-      await worth(message, "1 bitcoin", formatCurrency(price, unit));
-    } else {
-      // It must be an item
-      const bitcoinPrice = await getBitcoinPriceUSD();
-      const itemPrice = getItemPrice(unit.toLowerCase());
-  
-      if (isSingleItem(unit.toLowerCase())) {
-        // usd/item / usd/bitcoin = bitcoin/item
-        const bitcoinAmount = itemPrice / bitcoinPrice;
-        await worth(message, formatItem(1, unit.toLowerCase()), `${bitcoinAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })} bitcoin`);
+  switch (args.length) {
+    case 0:
+      await convert(message, ["1", "BTC", "USD"]);
+      return;
+    case 1:
+      const arg = args[0].toLowerCase();
+      if (arg == "help") {
+        await message.channel.send('**Currency Examples**: !p gbp, !p cad, !p xau');
+        await message.channel.send(`**Other Supported Items:** ${getAllItems().join(', ')}`);
+        await message.channel.send("**!p <item1> <item2>** will compare the cost of two items.");
+      } if (isSingleItem(arg)) {
+        await convert(message, ["1", arg, "BTC"]);
       } else {
-        // usd/bitcoin / usd/item = item/bitcoin
-        const itemAmount = bitcoinPrice / itemPrice;
-        await worth(message, "1 bitcoin", formatItem(itemAmount, unit.toLowerCase()));
+        await convert(message, ["1", "BTC", arg]);
       }
-    }
-  } else {
-    // Sats pricing
 
-    if (isNaN(itemPrice)) {
-      // It must be a currency
-      // sat/btc / currency/btc = sat/currency
-      const satPriceCurrency = 1_0000_0000 / await getBitcoinPriceInCurrency(unit);
-      
-      // All currencies become single when priced in sats
-      await worth(message, formatCurrency(1, unit), `${satPriceCurrency.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} satoshis`);
-    } else {
-      // It must be an item
-      // usd/btc / sat/btc = usd/sat
-      const satPrice = await getBitcoinPriceUSD() / 1_0000_0000;
-      const itemPrice = getItemPrice(unit.toLowerCase());
-      
-      // All items become single when priced in sats
-      // usd/item / usd/sat = sat/item
-      const satAmount = itemPrice / satPrice;
-      await worth(message, formatItem(1, unit.toLowerCase()), `${satAmount.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })} satoshis`);
-    
-    }
+      return;
+      default: await convert(message, ["1", args[0], args[1]]);
   }
 }
 
@@ -73,7 +31,7 @@ const btcUnits = {
   MBTC: { price: 1000, symbol: "mBTC" },
   CBTC: { price: 100, symbol: "cBTC" },
   DBTC: { price: 10, symbol: "dBTC" },
-  BTC: { price: 1, symbol: "BTC" }
+  BTC: { price: 1, symbol: "bitcoin" }
 };
 
 function countTrailingZeroes(num) {
