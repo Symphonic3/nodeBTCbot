@@ -8,7 +8,7 @@ async function mempoolCommand(message, args) {
     const response = await axios.get(api);
     data = response.data;
   } catch {
-    return message.channel.send("Unable to parse mempool data. Try again later.");
+    return await message.channel.send("Unable to parse mempool data. Try again later.");
   }
 
   // Define the fee brackets

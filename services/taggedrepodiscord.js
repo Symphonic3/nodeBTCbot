@@ -14,11 +14,11 @@ class DiscordRepoWrapper {
 
     const itemname = args[0];
     if (!itemname) {
-      return message.channel.send("Please specify an item name.");
+      return await message.channel.send("Please specify an item name.");
     }
     const tags = args.slice(1);
     if (tags.length === 0) {
-      return message.channel.send("Please provide at least one tag.");
+      return await message.channel.send("Please provide at least one tag.");
     }
     const result = this.repoManager.addRepoItem(itemname, tags);
     if (result) {

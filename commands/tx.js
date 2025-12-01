@@ -13,7 +13,7 @@ function formatDate(date) {
 
 async function txCommand(message, args) {
   if (args.length !== 1) {
-    return message.channel.send("The tx command requires a tx hash following it.");
+    return await message.channel.send("The tx command requires a tx hash following it.");
   }
   const api = `https://blockstream.info/api/tx/${args[0]}`;
   let data;
@@ -21,7 +21,7 @@ async function txCommand(message, args) {
     const response = await axios.get(api);
     data = response.data;
   } catch {
-    return message.channel.send("Invalid argument, please provide a valid tx hash");
+    return await message.channel.send("Invalid argument, please provide a valid tx hash");
   }
 
   let confirmed = "Unconfirmed";

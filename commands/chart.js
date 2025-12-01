@@ -4,7 +4,7 @@ const { CHART_TYPES, getChart } = require('../services/chart');
 async function chartCommand(message, args) {
   // Ensure there are exactly two arguments
   if (args.length < 1 || args.length > 2) {
-    return message.channel.send(`Please use the chart command in the format \`!chart chartname timespan\` where chartname is one of:\n\`\`\n${CHART_TYPES.join(', ')}\n\`\`\nand timespan is in the format #days, #weeks, #months, #years, etc. Example: \`!chart median-confirmation-time 10weeks\``);
+    return await message.channel.send(`Please use the chart command in the format \`!chart chartname timespan\` where chartname is one of:\n\`\`\n${CHART_TYPES.join(', ')}\n\`\`\nand timespan is in the format #days, #weeks, #months, #years, etc. Example: \`!chart median-confirmation-time 10weeks\``);
   }
 
   const name = args[0].toLowerCase();
@@ -28,7 +28,7 @@ async function chartCommand(message, args) {
 
     // Send the file as an attachment
     const attachment = new AttachmentBuilder(chart, { name: 'chart.png' });
-    return message.channel.send({ files: [attachment] });
+    return await message.channel.send({ files: [attachment] });
 
   } catch (error) {
     console.error(error);

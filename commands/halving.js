@@ -9,7 +9,7 @@ async function halvingCommand(message, args) {
     const response = await axios.get(api);
     height = parseInt(response.data, 10);
   } catch {
-    return message.channel.send("Failed to fetch current block height.");
+    return await message.channel.send("Failed to fetch current block height.");
   }
 
   const remainder = 210000 - (height % 210000);

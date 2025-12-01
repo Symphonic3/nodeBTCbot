@@ -3,7 +3,7 @@ const axios = require('axios');
  
 async function addressCommand(message, args) {
   if (args.length !== 1) {
-    return message.channel.send("The address command requires an address following it.");
+    return await message.channel.send("The address command requires an address following it.");
   }
 
   const api = `https://blockstream.info/api/address/${args[0]}`;
@@ -12,7 +12,7 @@ async function addressCommand(message, args) {
     const response = await axios.get(api);
     data = response.data;
   } catch {
-    return message.channel.send("Invalid argument, please provide a valid address");
+    return await message.channel.send("Invalid argument, please provide a valid address");
   }
 
   const chainStats = data.chain_stats;

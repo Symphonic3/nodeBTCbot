@@ -2,18 +2,18 @@ const axios = require('axios');
 
 async function solomine(message, args) {
   if (args.length === 0) {
-    return message.channel.send("Please specify a hashrate in TH/s, eg '150'.");
+    return await message.channel.send("Please specify a hashrate in TH/s, eg '150'.");
   }
 
   let solo_hash_rate;
   try {
     solo_hash_rate = parseFloat(args[0]);
   } catch {
-    return message.channel.send("Invalid hashrate specified.");
+    return await message.channel.send("Invalid hashrate specified.");
   }
 
   if (solo_hash_rate <= 0) {
-    return message.channel.send("With a hashrate of 0 or less, it'll take you forever to mine a block!");
+    return await message.channel.send("With a hashrate of 0 or less, it'll take you forever to mine a block!");
   }
 
   //                                                   kilo   mega   giga   tera
@@ -38,7 +38,7 @@ async function solomine(message, args) {
 
 async function mine(message, args) {
   if (args.length !== 4) {
-    return message.channel.send("The !mine command requires four arguments: `period` (block/hour/day/week/month/year), `sats/kWh` (electricity cost), `mining watts` (eg: 3247 for an S19j XP), and `joules per terahash` (eg: 21.5 for an S19j XP).");
+    return await message.channel.send("The !mine command requires four arguments: `period` (block/hour/day/week/month/year), `sats/kWh` (electricity cost), `mining watts` (eg: 3247 for an S19j XP), and `joules per terahash` (eg: 21.5 for an S19j XP).");
   }
 
   const period = args[0].toLowerCase();
@@ -49,15 +49,15 @@ async function mine(message, args) {
     mining_watts = parseFloat(args[2]);
     joules_per_terahash = parseFloat(args[3]);
   } catch {
-    return message.channel.send("Invalid input values. Please make sure all values are numbers.");
+    return await message.channel.send("Invalid input values. Please make sure all values are numbers.");
   }
 
   if (mining_watts <= 0) {
-    return message.channel.send("Invalid mining watts; mining requires energy!");
+    return await message.channel.send("Invalid mining watts; mining requires energy!");
   }
 
   if (joules_per_terahash <= 0) {
-    return message.channel.send("Invalid joules per terahash; hashing requires energy!");
+    return await message.channel.send("Invalid joules per terahash; hashing requires energy!");
   }
 
   let period_block_count;
@@ -81,7 +81,7 @@ async function mine(message, args) {
     period_block_count = 6 * 24 * 365.2425;
     break;
   default:
-    return message.channel.send("Invalid calculation period; allowed values are: 'block', 'hour', 'day', 'week', 'month', and 'year'.");
+    return await message.channel.send("Invalid calculation period; allowed values are: 'block', 'hour', 'day', 'week', 'month', and 'year'.");
   }
 
   const reward_block_count = Math.max(6 * 24 * 30, period_block_count);
