@@ -207,7 +207,7 @@ client.on('guildBanAdd', async (ban) => {
     const mod = match ? entry.executor : 'Unknown mod';
     let msg = `:man_police_officer: **Ban:** ${user?.tag} `;
     if (reason) {
-      msg = msg + "| " + reason + " | ";
+      msg = msg + "| " + reason + " ";
     }
     msg = msg + `>> ${mod.tag}`;
 
@@ -240,7 +240,7 @@ client.on('guildBanRemove', async (ban) => {
     const mod = match ? entry.executor : 'Unknown mod';
     let msg = `:repeat: **Unban:** ${user?.tag} `;
     if (reason) {
-      msg = msg + "| " + reason + " | ";
+      msg = msg + "| " + reason + " ";
     }
     msg = msg + `>> ${mod.tag}`;
 

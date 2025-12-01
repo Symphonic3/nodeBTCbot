@@ -95,4 +95,47 @@ function extractReason(args) {
   return args.filter(arg => !matchSnowflake(arg)).join(" ");
 }
 
-module.exports = { checkDataEdit, checkMod, extractMembers, extractIds, extractReason }
+class Reason {
+  constructor(userId, action, reason, mod) {
+    this.userId = userId;
+    this.action = action;
+    this.reason = reason;
+    this.mod = mod;
+  }
+
+  forReports() {
+    let str = `${this.action} <@${this.userId}> `;
+    if (this.reason)
+      str = str + "| " + this.reason + " ";
+    if (this.mod) 
+      str = str + ">> " + this.mod;
+    return str;
+  }
+
+  forModlog() {
+    let str = `${this.action} `;
+    if (this.reason)
+      str = str + "| " + this.reason + " ";
+    if (this.mod) 
+      str = str + ">> " + this.mod;
+    return str;
+  }
+
+  forInPlace() {
+    let str = `${this.action} <@${this.userId}>`;
+    if (this.reason)
+      str = str + " | " + this.reason;
+    return str;
+  }
+
+  forDiscord() {
+    if (!this.reason && !this.mod)
+      return null;
+    let str = this.reason ? this.reason + " " : "";
+    if (this.mod)
+      str = str + ">> " + this.mod;
+    return str;
+  }
+}
+
+module.exports = { checkDataEdit, checkMod, extractMembers, extractIds, extractReason, Reason }

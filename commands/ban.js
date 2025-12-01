@@ -1,7 +1,8 @@
 const { logMod } = require("../services/moderation");
-const { checkMod, extractIds, extractReason } = require("../utils/discordutils");
+const { checkMod, extractIds, extractReason, Reason } = require("../utils/discordutils");
 
 async function banCommand(message, args) {
+  const action = ":hammer: **Ban**";
   if (!await checkMod(message)) return;
 
   let n = 0;
@@ -10,14 +11,11 @@ async function banCommand(message, args) {
   if (ids.length == 0)
     return await message.channel.send("Specify user(s).");
 
-  const reason = extractReason(args);
-  const fullReason = `${reason ? "| " + reason + " " : ""}>> ${message.author.tag}`;
+  const _reason = extractReason(args);
   const reportChannel = message.guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
-  if (reportChannel) {
-    await reportChannel.send(`:hammer: **Ban:** ${ids.join(",")} ${fullReason}`);
-  }
 
   for (const userId of ids) {
+    const reason = new Reason(userId, action, _reason, message.author.tag);
     try {
       // Fetch the member from the guild
       const member = await message.guild.members.fetch(userId).catch(() => null);
@@ -25,10 +23,14 @@ async function banCommand(message, args) {
         await message.channel.send("Can't ban mods");
       } else {
         await message.guild.members.ban(userId, {
-          reason: fullReason,
-          deleteMessageSeconds: 0   // optional
+          reason: reason.forDiscord(),
+          deleteMessageSeconds: 0
         });
-        logMod(userId, `:hammer: **Ban** ${fullReason}`, false);
+        if (reportChannel)
+          await reportChannel.send(reason.forReports());
+        if (ids.length <= 4)
+          await message.channel.send(reason.forInPlace());
+        logMod(userId, reason.forModlog(), false);
         n++;
       }
     } catch (err) {
@@ -36,7 +38,8 @@ async function banCommand(message, args) {
     }
   }
 
-  await message.channel.send(`${n} users banned`);
+  if (ids.length > 1)
+    await message.channel.send(`${n} users banned`);
 }
 
 // Not yet refactored to use extract methods or anything because I don't want to break it
