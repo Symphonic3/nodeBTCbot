@@ -186,4 +186,71 @@ client.on('messageDelete', async (message) => {
   }
 });
 
+// Track bans 
+client.on('guildBanAdd', async (ban) => {
+  try {
+    const { guild, user } = ban;
+
+    const logs = await guild.fetchAuditLogs({
+      type: 22, // MEMBER_BAN_ADD
+      limit: 1
+    });
+
+    const entry = logs.entries.first();
+
+    const match =
+      entry &&
+      entry.target.id === user?.id &&
+      Date.now() - entry.createdTimestamp < 5000;
+
+    const reason = match ? entry.reason : null;
+    const mod = match ? entry.executor : 'Unknown mod';
+    let msg = `:man_police_officer: **Ban:** ${user?.tag} `;
+    if (reason) {
+      msg = msg + "| " + reason + " | ";
+    }
+    msg = msg + `>> ${mod.tag}`;
+
+    const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+    if (reportChannel) {
+      await reportChannel.send(msg);
+    }
+  } catch (error) {
+    console.error('Error logging ban:', error);
+  }
+});
+
+client.on('guildBanRemove', async (ban) => {
+  try {
+    const { guild, user } = ban;
+
+    const logs = await guild.fetchAuditLogs({
+      type: 23, // MEMBER_BAN_REMOVE
+      limit: 1
+    });
+
+    const entry = logs.entries.first();
+
+    const match =
+      entry &&
+      entry.target.id === user?.id &&
+      Date.now() - entry.createdTimestamp < 5000;
+
+    const reason = match ? entry.reason : null;
+    const mod = match ? entry.executor : 'Unknown mod';
+    let msg = `:repeat: **Unban:** ${user?.tag} `;
+    if (reason) {
+      msg = msg + "| " + reason + " | ";
+    }
+    msg = msg + `>> ${mod.tag}`;
+
+    const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+    if (reportChannel) {
+      await reportChannel.send(msg);
+    }
+  } catch (error) {
+    console.error('Error logging ban:', error);
+  }
+});
+
 client.login(TOKEN);

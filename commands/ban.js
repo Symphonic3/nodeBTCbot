@@ -28,13 +28,11 @@ async function banCommand(message, args) {
       try {
         // Fetch the member from the guild
         const member = await message.guild.members.fetch(userId).catch(() => null);
-        if (member) {
-          if (member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
-            await message.channel.send("Can't ban mods");
-          } else {
-            await message.guild.members.ban(userId);
-            n++;
-          }
+        if (member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
+          await message.channel.send("Can't ban mods");
+        } else {
+          await message.guild.members.ban(userId);
+          n++;
         }
       } catch (err) {
         console.error(`Error banning user with ID ${userId}: ${err}`);
