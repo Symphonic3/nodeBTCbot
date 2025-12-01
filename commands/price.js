@@ -3,23 +3,24 @@ const { getBitcoinPriceInCurrency, formatCurrency, getBitcoinPriceUSD } = requir
  
 async function price(message, args) {
   switch (args.length) {
-    case 0:
-      await convert(message, ["1", "BTC", "USD"]);
-      return;
-    case 1:
-      const arg = args[0].toLowerCase();
-      if (arg == "help") {
-        await message.channel.send('**Currency Examples**: !p gbp, !p cad, !p xau');
-        await message.channel.send(`**Other Supported Items:** ${getAllItems().join(', ')}`);
-        await message.channel.send("**!p <item1> <item2>** will compare the cost of two items.");
-      } if (isSingleItem(arg)) {
-        await convert(message, ["1", arg, "BTC"]);
-      } else {
-        await convert(message, ["1", "BTC", arg]);
-      }
+  case 0:
+    await convert(message, ["1", "BTC", "USD"]);
+    return;
+  case 1: {
+    const arg = args[0].toLowerCase();
+    if (arg == "help") {
+      await message.channel.send('**Currency Examples**: !p gbp, !p cad, !p xau');
+      await message.channel.send(`**Other Supported Items:** ${getAllItems().join(', ')}`);
+      await message.channel.send("**!p <item1> <item2>** will compare the cost of two items.");
+    } if (isSingleItem(arg)) {
+      await convert(message, ["1", arg, "BTC"]);
+    } else {
+      await convert(message, ["1", "BTC", arg]);
+    }
 
-      return;
-      default: await convert(message, ["1", args[0], args[1]]);
+    return;
+  }
+  default: await convert(message, ["1", args[0], args[1]]);
   }
 }
 
