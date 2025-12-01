@@ -1,7 +1,9 @@
 const { logMod, getModLog } = require("../services/moderation");
-const { extractIds, extractReason } = require("../utils/discordutils");
+const { extractIds, extractReason, checkMod } = require("../utils/discordutils");
 
 async function readModLog(message, args) {
+  if (!await checkMod(message)) return;
+
   const ids = await extractIds(message, args);
   if (ids.length != 1) {
     return await message.channel.send("Specify 1 user.");
@@ -10,6 +12,7 @@ async function readModLog(message, args) {
 }
 
 async function modLogAdd(message, args) {
+  if (!await checkMod(message)) return;
   const ids = await extractIds(message, args);
   if (ids.length != 1) {
     return await message.channel.send("Specify 1 user.");
