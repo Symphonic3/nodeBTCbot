@@ -7,6 +7,9 @@ async function banCommand(message, args) {
   let n = 0;
 
   const ids = await extractIds(message, args);
+  if (ids.length == 0)
+    return await message.channel.send("Specify user(s).");
+
   const reason = extractReason(args);
   const fullReason = `${reason ? "| " + reason + " " : ""}>> ${message.author.tag}`;
   const reportChannel = message.guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
