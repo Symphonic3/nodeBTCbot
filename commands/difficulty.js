@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-// eslint-disable-next-line no-unused-vars
+ 
 async function getDifficulty(message) {
   const api = "https://mempool.space/api/v1/mining/difficulty-adjustments/1m";
 
@@ -21,7 +21,7 @@ async function getDifficulty(message) {
       `• Change ratio: ×${diffRatio.toFixed(5)}`;
 
     await message.channel.send(messageString);
-  } catch (err) {
+  } catch {
     await message.channel.send("Error fetching Bitcoin difficulty data.");
   }
 }
