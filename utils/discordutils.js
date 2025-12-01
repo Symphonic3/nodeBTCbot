@@ -36,4 +36,63 @@ async function checkMod(message) {
   return hasPermission;
 }
 
-module.exports = { checkDataEdit, checkMod }
+/**
+ * Extracts all mentions and user ids present in a message as members.
+ * If a user id is not a member, they do not return.
+ * @param {Message} message 
+ * @param {string[]} args
+ */
+async function extractMembers(message, args) {
+  const members = [...message.mentions.members.values()];
+
+  // For each arg, try to extract a numeric user ID
+  for (const arg of args) {
+    // Look for a numeric ID in the argument
+    const match = matchSnowflake(arg);
+    if (match) {
+      const userId = match[1];
+      try {
+        // Fetch the member from the guild
+        const member = await message.guild.members.fetch(userId).catch(() => null);
+        if (member)
+          members.push(member);
+      } catch (err) {
+        console.error(`Error fetching user with ID ${userId}: ${err}`);
+      }
+    }
+  }
+
+  return members;
+}
+
+/**
+ * Extracts all mentions and user ids present in a message as user ids.
+ * Returns potential ids for members that are not in the server.
+ * @param {Message} message 
+ * @param {string[]} args
+ */
+async function extractIds(message, args) {
+  const ids = [...message.mentions.members.values()].map(member => member.id);
+
+  // For each arg, try to extract a numeric user ID
+  for (const arg of args) {
+    // Look for a numeric ID in the argument
+    const match = matchSnowflake(arg);
+    if (match) {
+      const userId = match[1];
+      ids.push(userId);
+    }
+  }
+
+  return ids;
+}
+
+function matchSnowflake(str) {
+  return str.match(/(\d{17,19})/);
+}
+
+function extractReason(args) {
+  return args.filter(arg => !matchSnowflake(arg)).join(" ");
+}
+
+module.exports = { checkDataEdit, checkMod, extractMembers, extractIds, extractReason }

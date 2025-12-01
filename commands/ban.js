@@ -1,48 +1,42 @@
-const { checkMod } = require("../utils/discordutils");
+const { logMod } = require("../services/moderation");
+const { checkMod, extractIds, extractReason } = require("../utils/discordutils");
 
 async function banCommand(message, args) {
   if (!await checkMod(message)) return;
 
   let n = 0;
 
-  // Ban all mentioned members
-  for (const member of message.mentions.members.values()) {
-    if (member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
-      await message.channel.send("Can't ban mods");
-    } else {
-      try {
-        await member.ban();
-        n++;
-      } catch (err) {
-        console.error(`Error banning ${member.user.tag}: ${err}`);
-      }
-    }
+  const ids = await extractIds(message, args);
+  const reason = extractReason(args);
+  const fullReason = `${reason ? "| " + reason + " " : ""}>> ${message.author.tag}`;
+  const reportChannel = message.guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+  if (reportChannel) {
+    await reportChannel.send(`:hammer: **Ban:** ${ids.join(",")} ${fullReason}`);
   }
 
-  // For each arg, try to extract a numeric user ID and ban that user
-  for (const arg of args) {
-    // Look for a numeric ID in the argument
-    const match = arg.match(/(\d+)/);
-    if (match) {
-      const userId = match[1];
-      try {
-        // Fetch the member from the guild
-        const member = await message.guild.members.fetch(userId).catch(() => null);
-        if (member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
-          await message.channel.send("Can't ban mods");
-        } else {
-          await message.guild.members.ban(userId);
-          n++;
-        }
-      } catch (err) {
-        console.error(`Error banning user with ID ${userId}: ${err}`);
+  for (const userId of ids) {
+    try {
+      // Fetch the member from the guild
+      const member = await message.guild.members.fetch(userId).catch(() => null);
+      if (member?.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
+        await message.channel.send("Can't ban mods");
+      } else {
+        await message.guild.members.ban(userId, {
+          reason: fullReason,
+          deleteMessageSeconds: 0   // optional
+        });
+        logMod(userId, `:hammer: **Ban** ${fullReason}`, false);
+        n++;
       }
+    } catch (err) {
+      console.error(`Error banning user with ID ${userId}: ${err}`);
     }
   }
 
   await message.channel.send(`${n} users banned`);
 }
- 
+
+// Not yet refactored to use extract methods or anything because I don't want to break it
 async function banAfterCommand(message, args) {
   if (!await checkMod(message)) return;
 
