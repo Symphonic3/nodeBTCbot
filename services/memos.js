@@ -1,6 +1,6 @@
-const { createDeepWatchedJsonStore } = require("../utils/utils");
+const { createSavable } = require("../utils/utils");
 
-const MEMOS = createDeepWatchedJsonStore("./data/memos.json");
+const MEMOS = createSavable("./data/memos.json");
 
 // Add a new memo
 function addMemo(title, content) {
@@ -11,6 +11,7 @@ function addMemo(title, content) {
   
   // Add the new memo to the store
   MEMOS[title] = content;
+  MEMOS.save();
   return `Memo '${title}' added.`;
 }
 
@@ -23,6 +24,7 @@ function editMemo(title, newContent) {
   
   // Update the memo content
   MEMOS[title] = newContent;
+  MEMOS.save();
   return `Memo '${title}' edited.`;
 }
 
@@ -35,6 +37,7 @@ function removeMemo(title) {
   
   // Remove the memo from the store
   delete MEMOS[title];
+  MEMOS.save();
   return `Memo '${title}' removed.`;
 }
 
@@ -63,7 +66,7 @@ function memosList() {
 }
 
 function isMemo(title) {
-  return MEMOS[title];
+  return !!MEMOS[title];
 }
 
 module.exports = { addMemo, removeMemo, editMemo, getMemo, memosList, isMemo }

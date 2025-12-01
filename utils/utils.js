@@ -32,14 +32,12 @@ function cachifyFunction(fn, timeoutMs) {
 }
 
 /**
- * Creates a deeply watched object from a json file, 
- * which will automatically write to disk when the object is updated.
+ * Creates an object from a json file which can be written to disk by invoking save().
  * 
- * Don't use this if the object will be updated quickly or frequently.
  * @param {string} filePath - The json file containing the object, path starts from project root
  * @returns {Object}
  */
-function createDeepWatchedJsonStore(filePath) {
+function createSavable(filePath) {
   // Ensure the file exists
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, '{}');
@@ -59,33 +57,9 @@ function createDeepWatchedJsonStore(filePath) {
       if (err) console.error('Failed to save JSON:', err);
     });
   };
+  data.save = save;
 
-  const wrap = (target) => {
-    if (typeof target !== 'object' || target === null) return target;
-
-    return new Proxy(target, {
-      get(obj, prop) {
-        const value = obj[prop];
-        // Recursively wrap nested objects
-        if (typeof value === 'object' && value !== null) {
-          return wrap(value);
-        }
-        return value;
-      },
-      set(obj, prop, value) {
-        obj[prop] = value;
-        save();
-        return true;
-      },
-      deleteProperty(obj, prop) {
-        delete obj[prop];
-        save();
-        return true;
-      }
-    });
-  };
-
-  return wrap(data);
+  return data;
 }
 
-module.exports = { cachifyFunction, createDeepWatchedJsonStore };
+module.exports = { cachifyFunction, createSavable };

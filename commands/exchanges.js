@@ -1,8 +1,8 @@
 const RepoManager = require("../services/taggedrepo");
 const DiscordRepoWrapper = require("../services/taggedrepodiscord");
-const { createDeepWatchedJsonStore } = require("../utils/utils");
+const { createSavable } = require("../utils/utils");
 
-const discordRepo = new DiscordRepoWrapper(new RepoManager(createDeepWatchedJsonStore("./data/exchanges.json")));
+const discordRepo = new DiscordRepoWrapper(new RepoManager(createSavable("./data/exchanges.json")));
 
 module.exports = {
   exchange: {

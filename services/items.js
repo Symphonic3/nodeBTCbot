@@ -1,6 +1,6 @@
-const { createDeepWatchedJsonStore } = require('../utils/utils.js');
+const { createSavable } = require('../utils/utils.js');
 
-const ITEM_DICT = createDeepWatchedJsonStore('./data/itemdict.json');
+const ITEM_DICT = createSavable('./data/itemdict.json');
 
 /**
  * Adds or edits an item.
@@ -50,6 +50,7 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
     single,
     last_edited_by: lastEditedBy,
   };
+  ITEM_DICT.save();
 
   return `Successfully ${mode === "add" ? "added" : "edited"} item: ${name} with value $${cost}`;
 }
@@ -74,6 +75,7 @@ function editItemPrice(code, price) {
 
   // Update the price.
   ITEM_DICT[code.toLowerCase()].cost = cost;
+  ITEM_DICT.save();
   return `Successfully updated item: ${ITEM_DICT[code.toLowerCase()].name} with value $${cost}`;
 }
 
@@ -101,7 +103,7 @@ function isSingleItem(code) {
 }
 
 /**
- * Formats an amount of an item  as a nice string
+ * Formats an amount of an item as a nice string
  * @param {number} amount 
  * @param {string} code 
  * @returns {string}

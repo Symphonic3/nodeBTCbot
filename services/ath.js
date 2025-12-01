@@ -1,10 +1,11 @@
-const { createDeepWatchedJsonStore } = require("../utils/utils");
+const { createSavable } = require("../utils/utils");
 
-const ATH = createDeepWatchedJsonStore("./data/ath.json");
+const ATH = createSavable("./data/ath.json");
 
 function notifyNewPrice(price) {
   if (price > ATH.ath) {
     ATH.ath = price;
+    ATH.save();
   }
 }
 
