@@ -37,9 +37,6 @@ async function versionCommand(message, args) {
   try {
     const response = await axios.get(botUrl);
     const data = response.data;
-    if (data.status === "404") {
-      return await message.channel.send(`HEAD is not pushed to remote. Hash: ${headHash}`);
-    }
 
     let versionString = `Bot version: <https://github.com/Symphonic3/nodeBTCbot/commit/${headHash}>`;
     if (data.behind_by > 0) {
@@ -53,7 +50,10 @@ async function versionCommand(message, args) {
     }
     return await message.channel.send(versionString);
   } catch (err) {
-    return await message.channel.send(`Error checking commit: ${err.message}`);
+    if (err.response?.status === 404) {
+      return await message.channel.send(`Local HEAD is not pushed to remote. Hash: ${headHash}`);
+    } else
+      return await message.channel.send(`Error checking commit: ${err.message}`);
   }
 }
 
