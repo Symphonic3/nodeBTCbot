@@ -99,11 +99,9 @@ class RepoManager {
     // Otherwise, filter the repo to include only items that have all the specified tags.
     const result = {};
     for (const item in this.repoObject) {
-      if (Object.hasOwnProperty.call(this.repoObject, item)) {
-        // Check if the item's tags include every tag in the lookup array.
-        if (tags.every(tag => this.repoObject[item].tags.includes(tag))) {
-          result[item] = this.repoObject[item];
-        }
+      // Check if the item's tags include every tag in the lookup array.
+      if (tags.every(tag => this.repoObject[item]?.tags?.includes(tag) ?? false)) {
+        result[item] = this.repoObject[item];
       }
     }
     return result;
