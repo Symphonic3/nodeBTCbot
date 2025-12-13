@@ -5,7 +5,10 @@
  2. Setup your `.env` based on the example of `example.env`
  3. Run `npm install`
  4. Run `node --env-file=.env index.js`
-# Notes for contributors
+# Contributing
+
+**If you feel like contributing but don't know what to add, take a look at TODO.md.**
+
  - Note that all module.exports from any file in `commands/` will automatically be registered as commands
  - Extract logic where some data is being provided or manipulated to `services/` where possible
  - Try to seperate commands into their own files as much as possible, but group related ones if it makes sense
