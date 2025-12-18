@@ -3,3 +3,5 @@
  - add a modlogremove command to delete entries
  - subsat feerates in !feerate and elsewhere (!mempool ?)
  - starboard (?)
+ - tempnick
+ - log timeouts
