@@ -4,6 +4,8 @@ const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance'
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 const { isMemo } = require('./services/memos');
 const { initMutes } = require('./services/mutes');
+const { Reason } = require('./utils/discordutils');
+const { logMod } = require('./services/moderation');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -207,18 +209,16 @@ client.on('guildBanAdd', async (ban) => {
       entry.target.id === user?.id &&
       Date.now() - entry.createdTimestamp < 5000;
 
-    const reason = match ? entry.reason : null;
-    const mod = match ? entry.executor : 'Unknown mod';
-    let msg = `:man_police_officer: **Ban:** ${user?.tag} `;
-    if (reason) {
-      msg = msg + "| " + reason + " ";
-    }
-    msg = msg + `>> ${mod.tag}`;
+    const _reason = match ? entry.reason : null;
+    const modTag = match ? entry.executor.tag : 'Unknown mod';
+    const reason = new Reason(user.id, ":man_police_officer: **Ban**", _reason, modTag);
 
     const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
     if (reportChannel) {
-      await reportChannel.send(msg);
+      await reportChannel.send(reason.forReports());
     }
+
+    logMod(user.id, reason.forModlog(), false);
   } catch (error) {
     console.error('Error logging ban:', error);
   }
@@ -240,20 +240,56 @@ client.on('guildBanRemove', async (ban) => {
       entry.target.id === user?.id &&
       Date.now() - entry.createdTimestamp < 5000;
 
-    const reason = match ? entry.reason : null;
-    const mod = match ? entry.executor : 'Unknown mod';
-    let msg = `:repeat: **Unban:** ${user?.tag} `;
-    if (reason) {
-      msg = msg + "| " + reason + " ";
-    }
-    msg = msg + `>> ${mod.tag}`;
+    const _reason = match ? entry.reason : null;
+    const modTag = match ? entry.executor.tag : 'Unknown mod';
+    const reason = new Reason(user.id, ":repeat: **Unban**", _reason, modTag);
 
     const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
     if (reportChannel) {
-      await reportChannel.send(msg);
+      await reportChannel.send(reason.forReports());
     }
+
+    logMod(user.id, reason.forModlog(), true);
   } catch (error) {
     console.error('Error logging ban:', error);
+  }
+});
+
+//track timeouts
+client.on('guildMemberUpdate', async (oldMember, newMember) => {
+  try {
+    const guild = newMember.guild;
+
+    if (newMember.communicationDisabledUntilTimestamp == oldMember.communicationDisabledUntilTimestamp)
+      return; //no timeout changes
+
+    const logs = await guild.fetchAuditLogs({
+      type: 24, // MEMBER_UPDATE
+      limit: 1
+    });
+
+    const entry = logs.entries.first();
+
+    const match =
+      entry &&
+      entry.target.id === newMember?.id &&
+      Date.now() - entry.createdTimestamp < 5000;
+
+    const info = newMember.communicationDisabledUntilTimestamp ? `Expires <t:${Math.floor(newMember.communicationDisabledUntilTimestamp / 1000)}:R>` : `Removed`;
+    
+    let _reason = match ? entry.reason : null;
+    _reason = _reason ? _reason + " | " + info : info;
+    const modTag = match ? entry.executor.tag : 'Unknown mod';
+    const reason = new Reason(newMember.user.id, ":hourglass: **Timeout**", _reason, modTag);
+
+    const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+    if (reportChannel) {
+      await reportChannel.send(reason.forReports());
+    }
+
+    logMod(newMember.user.id, reason.forModlog(), true);
+  } catch (error) {
+    console.error('Error logging member update:', error);
   }
 });
 

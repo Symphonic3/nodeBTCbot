@@ -4,4 +4,3 @@
  - subsat feerates in !feerate and elsewhere (!mempool ?)
  - starboard (?)
  - tempnick
- - log timeouts
