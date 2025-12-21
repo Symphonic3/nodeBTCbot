@@ -1,6 +1,6 @@
 const { Reason } = require("../utils/discordutils");
 const { createSavable } = require("../utils/utils");
-const { logMod } = require("./moderation");
+const { modLogAdd } = require("./moderation");
 
 const MUTES = createSavable("./data/mutes.json");
 const _timeouts = {};
@@ -43,7 +43,7 @@ async function mute(guild, userId, duration, message, _reason) {
   if (reportChannel)
     await reportChannel.send(reason.forReports());
 
-  logMod(userId, reason.forModlog(), true);
+  modLogAdd(userId, reason.forModlog(), true);
 
   if (message)
     await message.channel.send(reason.forInPlace());
@@ -78,7 +78,7 @@ async function unmute(guild, userId, message, _reason) {
   if (reportChannel)
     await reportChannel.send(reason.forReports());
 
-  logMod(userId, reason.forModlog(), true);
+  modLogAdd(userId, reason.forModlog(), true);
 
   if (message)
     await message.channel.send(reason.forInPlace());

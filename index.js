@@ -5,7 +5,7 @@ const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 const { isMemo } = require('./services/memos');
 const { initMutes } = require('./services/mutes');
 const { Reason } = require('./utils/discordutils');
-const { logMod } = require('./services/moderation');
+const { modLogAdd } = require('./services/moderation');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -218,7 +218,7 @@ client.on('guildBanAdd', async (ban) => {
       await reportChannel.send(reason.forReports());
     }
 
-    logMod(user.id, reason.forModlog(), false);
+    modLogAdd(user.id, reason.forModlog(), false);
   } catch (error) {
     console.error('Error logging ban:', error);
   }
@@ -249,7 +249,7 @@ client.on('guildBanRemove', async (ban) => {
       await reportChannel.send(reason.forReports());
     }
 
-    logMod(user.id, reason.forModlog(), true);
+    modLogAdd(user.id, reason.forModlog(), true);
   } catch (error) {
     console.error('Error logging ban:', error);
   }
@@ -287,7 +287,7 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
       await reportChannel.send(reason.forReports());
     }
 
-    logMod(newMember.user.id, reason.forModlog(), true);
+    modLogAdd(newMember.user.id, reason.forModlog(), true);
   } catch (error) {
     console.error('Error logging member update:', error);
   }

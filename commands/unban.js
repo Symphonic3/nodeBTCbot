@@ -1,4 +1,4 @@
-const { logMod } = require("../services/moderation");
+const { modLogAdd } = require("../services/moderation");
 const { extractIds, extractReason, checkMod, Reason } = require("../utils/discordutils");
 
 async function unban(message, args) {
@@ -17,7 +17,7 @@ async function unban(message, args) {
   }
 
   await message.guild.bans.remove(ids[0], reason.forDiscord());
-  logMod(ids[0], reason.forModlog(), true);
+  modLogAdd(ids[0], reason.forModlog(), true);
 
   await message.channel.send(reason.forInPlace());
 }

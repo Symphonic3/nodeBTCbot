@@ -9,7 +9,7 @@ function activate(userid) {
   }
 }
 
-function logMod(userid, item, doActivate) {
+function modLogAdd(userid, item, doActivate) {
   if (doActivate) {
     activate(userid);
   }
@@ -25,7 +25,18 @@ function getModLog(userid) {
   if (!MODLOG[userid])
     return "No saved modlog.";
 
-  return "Modlog:\n\n" + MODLOG[userid].map(item => `<t:${item.sec}>: ${item.message}`).join("\n");
+  return "Modlog:\n\n" + MODLOG[userid].map((item, i) => `[${i}] <t:${item.sec}>: ${item.message}`).join("\n");
 }
 
-module.exports = { activate, logMod, getModLog }
+function modLogRemove(userid, index) {
+  if (!MODLOG[userid])
+    return;
+
+  if (MODLOG[userid].length <= index)
+    return;
+
+  MODLOG[userid].splice(index, 1);
+  MODLOG.save();
+}
+
+module.exports = { activate, modLogAdd, getModLog, modLogRemove }

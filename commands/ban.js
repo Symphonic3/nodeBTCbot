@@ -1,4 +1,4 @@
-const { logMod } = require("../services/moderation");
+const { modLogAdd } = require("../services/moderation");
 const { checkMod, extractIds, extractReason, Reason } = require("../utils/discordutils");
 
 async function banCommand(message, args) {
@@ -30,7 +30,7 @@ async function banCommand(message, args) {
           await reportChannel.send(reason.forReports());
         if (ids.length <= 4)
           await message.channel.send(reason.forInPlace());
-        logMod(userId, reason.forModlog(), false);
+        modLogAdd(userId, reason.forModlog(), false);
         n++;
       }
     } catch (err) {

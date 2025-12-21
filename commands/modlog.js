@@ -1,7 +1,7 @@
-const { logMod, getModLog } = require("../services/moderation");
+const { modLogAdd, getModLog, modLogRemove } = require("../services/moderation");
 const { extractIds, extractReason, checkMod } = require("../utils/discordutils");
 
-async function readModLog(message, args) {
+async function getModLogCommand(message, args) {
   if (!await checkMod(message)) return;
 
   const ids = await extractIds(message, args);
@@ -11,21 +11,41 @@ async function readModLog(message, args) {
   await message.channel.send(getModLog(ids[0]));
 }
 
-async function modLogAdd(message, args) {
+async function modLogAddCommand(message, args) {
   if (!await checkMod(message)) return;
+  
   const ids = await extractIds(message, args);
   if (ids.length != 1) {
     return await message.channel.send("Specify 1 user.");
   }
-  logMod(ids[0], extractReason(args), true);
+  modLogAdd(ids[0], extractReason(args), true);
   await message.channel.send("Added to user modlog.");
+}
+
+async function modLogRemoveCommand(message, args) {
+  if (!await checkMod(message)) return;
+
+  const ids = await extractIds(message, args);
+  if (ids.length != 1) {
+    return await message.channel.send("Specify 1 user.");
+  }
+
+  const intidx = parseInt(extractReason(args));
+  if (isNaN(intidx))
+    return await message.channel.send("Invalid index.");
+
+  modLogRemove(ids[0], intidx);
+  await message.channel.send("Removed from user modlog.");
 }
 
 module.exports = {
   modlog: {
-    execute: readModLog
+    execute: getModLogCommand
   },
   modlogadd: {
-    execute: modLogAdd
+    execute: modLogAddCommand
+  },
+  modlogremove: {
+    execute: modLogRemoveCommand
   }
 }
