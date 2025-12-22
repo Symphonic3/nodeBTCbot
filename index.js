@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBuilder, ChannelType } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBuilder, ChannelType, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
@@ -301,6 +301,82 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
     }
   } catch (error) {
     console.error('Error logging member update:', error);
+  }
+});
+
+const STAR_EMOJI = "⭐";
+const STAR_ACKNOWLEDGE_EMOJI = "🌟";
+const STAR_THRESHOLD = 2;
+
+client.on('messageReactionAdd', async (reaction, user) => {
+  try {
+    if (user.bot)
+      return;
+
+    if (reaction.emoji.name !== STAR_EMOJI)
+      return;
+
+    const message = reaction.message;
+
+    if (!message.guild)
+      return;
+
+    const member = message.guild.members.cache.get(user.id);
+    if (!member)
+      return;
+
+    //only approved users contribute to starboarding, otherwise disallow star reactions
+    if (member?.roles?.cache?.some(role => process.env.EDIT_DATA_ROLES.includes(role.id))) {
+      if (reaction.users.cache.size < STAR_THRESHOLD)
+        return;
+
+      const ackReaction = message.reactions.cache?.get(STAR_ACKNOWLEDGE_EMOJI);
+
+      if (ackReaction?.users.cache?.has(client.user.id)) //the bot has already starboarded this msg
+        return;
+
+      await message.react(STAR_ACKNOWLEDGE_EMOJI);
+
+      const starboardChannel = message.guild.channels.cache.find(channel => channel.id === process.env.STARBOARD_CHANNEL);
+      if (starboardChannel) {
+        const embed = new EmbedBuilder()
+          .setAuthor({
+            name: message.author.tag,
+            iconURL: message.author.displayAvatarURL()
+          })
+          .setDescription(message.content || "*No text content*")
+          .setColor(0xF7931A)
+          .setTimestamp(message.createdAt)
+          .addFields({
+            name: "Jump to message",
+            value: `[Click here](${message.url})`
+          });
+
+        const attachments = Array.from(message.attachments.values());
+
+        if (attachments.length > 0) {
+          embed.setImage(attachments[0].url);
+
+          if (attachments.length > 1) {
+            embed.addFields({
+              name: "Attachments",
+              value: attachments
+                .map(a => `[${a.name}](${a.url})`)
+                .join("\n")
+            });
+          }
+        }
+
+        await starboardChannel.send({
+          content: `⭐ **${reaction.users.cache.size}** | <#${message.channel.id}>`,
+          embeds: [embed]
+        });
+      }
+    } else {
+      await reaction.users.remove(user.id);
+    }
+  } catch (error) {
+    console.error('Error processing reactions:', error);
   }
 });
 
