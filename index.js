@@ -6,6 +6,7 @@ const { isMemo } = require('./services/memos');
 const { initMutes } = require('./services/mutes');
 const { Reason } = require('./utils/discordutils');
 const { modLogAdd } = require('./services/moderation');
+const { initNicks, canUserUpdateNickname } = require('./services/tempnick');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -45,6 +46,7 @@ client.once(Events.ClientReady, async () => {
   await updatePresence();
   for (let guild of client.guilds.cache.values()) {
     initMutes(guild);
+    initNicks(guild);
   }
   console.log(`✅ Logged in as ${client.user.tag}`);
   // Set an interval to update the bot's presence every 10 seconds
@@ -260,34 +262,43 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
   try {
     const guild = newMember.guild;
 
-    if (newMember.communicationDisabledUntilTimestamp == oldMember.communicationDisabledUntilTimestamp)
-      return; //no timeout changes
-
-    const logs = await guild.fetchAuditLogs({
-      type: 24, // MEMBER_UPDATE
-      limit: 1
-    });
-
-    const entry = logs.entries.first();
-
-    const match =
+    if (newMember.communicationDisabledUntilTimestamp !== oldMember.communicationDisabledUntilTimestamp) {
+      //timeout changes
+      
+      const logs = await guild.fetchAuditLogs({
+        type: 24, // MEMBER_UPDATE
+        limit: 1
+      });
+      
+      const entry = logs.entries.first();
+      
+      const match =
       entry &&
       entry.target.id === newMember?.id &&
       Date.now() - entry.createdTimestamp < 5000;
-
-    const info = newMember.communicationDisabledUntilTimestamp ? `Expires <t:${Math.floor(newMember.communicationDisabledUntilTimestamp / 1000)}:R>` : `Removed`;
-    
-    let _reason = match ? entry.reason : null;
-    _reason = _reason ? _reason + " | " + info : info;
-    const modTag = match ? entry.executor.tag : 'Unknown mod';
-    const reason = new Reason(newMember.user.id, ":hourglass: **Timeout**", _reason, modTag);
-
-    const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
-    if (reportChannel) {
-      await reportChannel.send(reason.forReports());
+      
+      const info = newMember.communicationDisabledUntilTimestamp ? `Expires <t:${Math.floor(newMember.communicationDisabledUntilTimestamp / 1000)}:R>` : `Removed`;
+      
+      let _reason = match ? entry.reason : null;
+      _reason = _reason ? _reason + " | " + info : info;
+      const modTag = match ? entry.executor.tag : 'Unknown mod';
+      const reason = new Reason(newMember.user.id, ":hourglass: **Timeout**", _reason, modTag);
+      
+      const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+      if (reportChannel) {
+        await reportChannel.send(reason.forReports());
+      }
+      
+      modLogAdd(newMember.user.id, reason.forModlog(), true);
     }
 
-    modLogAdd(newMember.user.id, reason.forModlog(), true);
+    if (newMember.nickname !== oldMember.nickname) {
+      //nickname changes
+
+      if (!canUserUpdateNickname(newMember, newMember.nickname)) {
+        await newMember.setNickname(oldMember.nickname);
+      }
+    }
   } catch (error) {
     console.error('Error logging member update:', error);
   }

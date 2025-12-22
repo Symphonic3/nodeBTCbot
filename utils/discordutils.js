@@ -72,7 +72,8 @@ function extractReasonWithoutDuration(args) {
 }
 
 function extractDuration(args) {
-  return getAsDurationMs(args.filter(arg => !matchSnowflakeOrPing(arg))[0]);
+  const parsed = getAsDurationMs(args.filter(arg => !matchSnowflakeOrPing(arg))[0]);
+  return isNaN(parsed) ? getAsDurationMs("1d") : parsed;
 }
 
 class Reason {
