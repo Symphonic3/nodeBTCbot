@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBuilder, ChannelType, EmbedBuilder } = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Events, ActivityType, AttachmentBuilder, ChannelType, EmbedBuilder, AuditLogEvent } = require('discord.js');
 const fs = require('fs');
 const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance');
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
@@ -194,25 +194,42 @@ client.on('messageDelete', async (message) => {
   }
 });
 
+/**
+ * Attempts to find an audit log entry for an event that just occured.
+ * This function is slow and tries multiple times to catch the event.
+ * @param {AuditLogEvent} type 
+ * @param {(entry: GuildAuditLogsEntry) => boolean} predicate 
+ */
+async function getRecentlyCreatedAuditLogFor(guild, type, predicate) {
+  let backoff = 200;
+  for (let i = 0; i < 3; i++) {
+    const logs = await guild.fetchAuditLogs({
+      type,
+      limit: 10
+    });
+
+    const match = logs.entries.find(
+      entry => Date.now() - entry.createdTimestamp < 3000+backoff && predicate(entry));
+
+    if (match)
+      return match;
+
+    await new Promise(resolve => setTimeout(resolve, backoff));
+    backoff *= 2;
+  }
+  return null;
+}
+
 // Track bans 
 client.on('guildBanAdd', async (ban) => {
   try {
     const { guild, user } = ban;
 
-    const logs = await guild.fetchAuditLogs({
-      type: 22, // MEMBER_BAN_ADD
-      limit: 1
-    });
+    const entry = await getRecentlyCreatedAuditLogFor(guild, AuditLogEvent.MemberBanAdd, 
+      entry => entry.target.id === user?.id);
 
-    const entry = logs.entries.first();
-
-    const match =
-      entry &&
-      entry.target.id === user?.id &&
-      Date.now() - entry.createdTimestamp < 5000;
-
-    const _reason = match ? entry.reason : null;
-    const modTag = match ? entry.executor.tag : 'Unknown mod';
+    const _reason = entry?.reason;
+    const modTag = entry?.executor.tag ?? 'Unknown mod';
     const reason = new Reason(user.id, ":man_police_officer: **Ban**", _reason, modTag);
 
     const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
@@ -230,20 +247,11 @@ client.on('guildBanRemove', async (ban) => {
   try {
     const { guild, user } = ban;
 
-    const logs = await guild.fetchAuditLogs({
-      type: 23, // MEMBER_BAN_REMOVE
-      limit: 1
-    });
+    const entry = await getRecentlyCreatedAuditLogFor(guild, AuditLogEvent.MemberBanRemove, 
+      entry => entry.target.id === user?.id);
 
-    const entry = logs.entries.first();
-
-    const match =
-      entry &&
-      entry.target.id === user?.id &&
-      Date.now() - entry.createdTimestamp < 5000;
-
-    const _reason = match ? entry.reason : null;
-    const modTag = match ? entry.executor.tag : 'Unknown mod';
+    const _reason = entry?.reason;
+    const modTag = entry?.executor.tag ?? 'Unknown mod';
     const reason = new Reason(user.id, ":repeat: **Unban**", _reason, modTag);
 
     const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
@@ -265,23 +273,14 @@ client.on('guildMemberUpdate', async (oldMember, newMember) => {
     if (newMember.communicationDisabledUntilTimestamp !== oldMember.communicationDisabledUntilTimestamp) {
       //timeout changes
       
-      const logs = await guild.fetchAuditLogs({
-        type: 24, // MEMBER_UPDATE
-        limit: 1
-      });
-      
-      const entry = logs.entries.first();
-      
-      const match =
-      entry &&
-      entry.target.id === newMember?.id &&
-      Date.now() - entry.createdTimestamp < 5000;
+      const entry = await getRecentlyCreatedAuditLogFor(guild, AuditLogEvent.MemberUpdate, 
+        entry => entry.target.id === newMember?.id);
       
       const info = newMember.communicationDisabledUntilTimestamp ? `Expires <t:${Math.floor(newMember.communicationDisabledUntilTimestamp / 1000)}:R>` : `Removed`;
       
-      let _reason = match ? entry.reason : null;
+      let _reason = entry?.reason;
       _reason = _reason ? _reason + " | " + info : info;
-      const modTag = match ? entry.executor.tag : 'Unknown mod';
+      const modTag = entry?.executor.tag ?? 'Unknown mod';
       const reason = new Reason(newMember.user.id, ":hourglass: **Timeout**", _reason, modTag);
       
       const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
