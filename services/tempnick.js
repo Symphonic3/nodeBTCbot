@@ -1,8 +1,9 @@
 const { Reason } = require("../utils/discordutils");
-const { createSavable } = require("../utils/utils");
+const { save, load } = require("../utils/utils");
 const { modLogAdd } = require("./moderation");
 
-const TEMPNICKS = createSavable("./data/tempnicks.json");
+const FILEPATH = "./data/tempnicks.json";
+const TEMPNICKS = load(FILEPATH);
 const _timeouts = {};
 
 /**
@@ -40,7 +41,7 @@ async function tempnick(guild, userId, duration, message, _reason, nick) {
   }, duration);
 
   TEMPNICKS[guild.id][userId] = { nick, expiry };
-  TEMPNICKS.save();
+  save(TEMPNICKS, FILEPATH);
  
   try {
     await member.setNickname(truncate(nick, 32));
@@ -73,7 +74,7 @@ async function unnick(guild, userId, message, _reason) {
     return;
 
   delete TEMPNICKS[guild.id][userId];
-  TEMPNICKS.save();
+  save(TEMPNICKS, FILEPATH);
 
   try {
     await member.setNickname(null);

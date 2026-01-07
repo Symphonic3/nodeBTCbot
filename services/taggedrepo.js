@@ -1,3 +1,5 @@
+const { save, load } = require("../utils/utils");
+
 /**
  * Provides methods for interacting with a generic tagged repo of the following format:
  *
@@ -12,8 +14,9 @@
  */
 
 class RepoManager {
-  constructor(repoObject) {
-    this.repoObject = repoObject;
+  constructor(filePath) {
+    this.repoObject = load(filePath);
+    this.save = () => save(this.repoObject, filePath);
   }
 
   addTagToRepoItem(itemname, tag) {
@@ -21,7 +24,7 @@ class RepoManager {
       // If the item exists, add the tag if it's not already present
       if (!this.repoObject[itemname].tags.includes(tag)) {
         this.repoObject[itemname].tags.push(tag);
-        this.repoObject.save();
+        this.save();
         return true;
       }
       return false; // Tag already exists
@@ -35,7 +38,7 @@ class RepoManager {
       if (index > -1) {
         // Remove the tag from the array if it exists
         this.repoObject[itemname].tags.splice(index, 1);
-        this.repoObject.save();
+        this.save();
         return true;
       }
       return false; // Tag does not exist
@@ -47,7 +50,7 @@ class RepoManager {
     if (this.repoObject[itemname]) {
       // Update the link for the item
       this.repoObject[itemname].link = link;
-      this.repoObject.save();
+      this.save();
       return true;
     }
     return false; // Item doesn't exist
@@ -57,7 +60,7 @@ class RepoManager {
     if (this.repoObject[itemname]) {
       // Delete the item from the repo object
       delete this.repoObject[itemname];
-      this.repoObject.save();
+      this.save();
       return true;
     }
     return false; // Item doesn't exist
@@ -67,7 +70,7 @@ class RepoManager {
     if (!this.repoObject[itemname]) {
       // Add the new item with the provided tags and an empty link
       this.repoObject[itemname] = { tags: tags, link: '' };
-      this.repoObject.save();
+      this.save();
       return true;
     }
     return false; // Item already exists

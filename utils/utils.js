@@ -32,34 +32,32 @@ function cachifyFunction(fn, timeoutMs) {
 }
 
 /**
- * Creates an object from a json file which can be written to disk by invoking save().
- * 
+ * Save an object to a file
+ * @param {Object} data
+ * @param {string} filePath - The json file containing the object, path starts from project root
+ */
+function save(data, filePath) {
+  fs.writeFile(filePath, JSON.stringify(data, null, 2), err => {
+    if (err) console.error('Failed to save JSON:', err);
+  });
+}
+
+/**
+ * Load an object from a file
  * @param {string} filePath - The json file containing the object, path starts from project root
  * @returns {Object}
  */
-function createSavable(filePath) {
+function load(filePath) {
   // Ensure the file exists
   if (!fs.existsSync(filePath)) {
     fs.writeFileSync(filePath, '{}');
   }
-
-  let data;
-
   // Load data
   try {
-    data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    return JSON.parse(fs.readFileSync(filePath, 'utf8'));
   } catch {
-    data = {};
+    return {};
   }
-
-  const save = () => {
-    fs.writeFile(filePath, JSON.stringify(data, null, 2), err => {
-      if (err) console.error('Failed to save JSON:', err);
-    });
-  };
-  data.save = save;
-
-  return data;
 }
 
 function getAsDurationMs(str) {
@@ -92,4 +90,4 @@ function getAsDurationMs(str) {
   return total;
 }
 
-module.exports = { cachifyFunction, createSavable, getAsDurationMs };
+module.exports = { cachifyFunction, save, load, getAsDurationMs };

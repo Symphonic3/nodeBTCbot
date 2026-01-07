@@ -1,11 +1,12 @@
-const { createSavable } = require("../utils/utils");
+const { save, load } = require("../utils/utils");
 
-const ATH = createSavable("./data/ath.json");
+const FILEPATH = "./data/ath.json";
+const ATH = load(FILEPATH);
 
 function notifyNewPrice(price) {
   if (price > ATH.ath) {
     ATH.ath = price;
-    ATH.save();
+    save(ATH, FILEPATH);
   }
 }
 

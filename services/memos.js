@@ -1,6 +1,7 @@
-const { createSavable } = require("../utils/utils");
+const { save, load } = require("../utils/utils");
 
-const MEMOS = createSavable("./data/memos.json");
+const FILEPATH = "./data/memos.json";
+const MEMOS = load(FILEPATH);
 
 // Add a new memo
 function addMemo(title, content) {
@@ -11,7 +12,7 @@ function addMemo(title, content) {
   
   // Add the new memo to the store
   MEMOS[title] = content;
-  MEMOS.save();
+  save(MEMOS, FILEPATH);
   return `Memo '${title}' added.`;
 }
 
@@ -24,7 +25,7 @@ function editMemo(title, newContent) {
   
   // Update the memo content
   MEMOS[title] = newContent;
-  MEMOS.save();
+  save(MEMOS, FILEPATH);
   return `Memo '${title}' edited.`;
 }
 
@@ -37,7 +38,7 @@ function removeMemo(title) {
   
   // Remove the memo from the store
   delete MEMOS[title];
-  MEMOS.save();
+  save(MEMOS, FILEPATH);
   return `Memo '${title}' removed.`;
 }
 

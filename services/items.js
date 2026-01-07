@@ -1,6 +1,7 @@
-const { createSavable } = require('../utils/utils.js');
+const { save, load } = require('../utils/utils.js');
 
-const ITEM_DICT = createSavable('./data/itemdict.json');
+const FILEPATH = './data/itemdict.json';
+const ITEM_DICT = load(FILEPATH);
 
 /**
  * Adds or edits an item.
@@ -50,7 +51,7 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
     single,
     last_edited_by: lastEditedBy,
   };
-  ITEM_DICT.save();
+  save(ITEM_DICT, FILEPATH);
 
   return `Successfully ${mode === "add" ? "added" : "edited"} item: ${name} with value $${cost}`;
 }
@@ -75,7 +76,7 @@ function editItemPrice(code, price) {
 
   // Update the price.
   ITEM_DICT[code.toLowerCase()].cost = cost;
-  ITEM_DICT.save();
+  save(ITEM_DICT, FILEPATH);
   return `Successfully updated item: ${ITEM_DICT[code.toLowerCase()].name} with value $${cost}`;
 }
 

@@ -1,11 +1,12 @@
-const { createSavable } = require("../utils/utils");
+const { save, load } = require("../utils/utils");
 
-const MODLOG = createSavable("./data/modlog.json");
+const FILEPATH = "./data/modlog.json";
+const MODLOG = load(FILEPATH);
 
 function activate(userid) {
   if (!MODLOG[userid]) {
     MODLOG[userid] = [];
-    MODLOG.save();
+    save(MODLOG, FILEPATH);
   }
 }
 
@@ -18,7 +19,7 @@ function modLogAdd(userid, item, doActivate) {
     return;
 
   MODLOG[userid].push({ sec: Math.round(Date.now() / 1000), message: item });
-  MODLOG.save();
+  save(MODLOG, FILEPATH);
 }
 
 function getModLog(userid) {
@@ -36,7 +37,7 @@ function modLogRemove(userid, index) {
     return;
 
   MODLOG[userid].splice(index, 1);
-  MODLOG.save();
+  save(MODLOG, FILEPATH);
 }
 
 module.exports = { activate, modLogAdd, getModLog, modLogRemove }

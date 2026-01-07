@@ -1,8 +1,9 @@
 const { Reason } = require("../utils/discordutils");
-const { createSavable } = require("../utils/utils");
+const { save, load } = require("../utils/utils");
 const { modLogAdd } = require("./moderation");
 
-const MUTES = createSavable("./data/mutes.json");
+const FILEPATH = "./data/mutes.json";
+const MUTES = load(FILEPATH);
 const _timeouts = {};
 
 async function mute(guild, userId, duration, message, _reason) {
@@ -36,7 +37,7 @@ async function mute(guild, userId, duration, message, _reason) {
   }, duration);
 
   MUTES[guild.id][userId] = expiry;
-  MUTES.save();
+  save(MUTES, FILEPATH);
 
   const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
   const reason = new Reason(userId, ":mute: **Mute**", _reason, message?.author.tag);
@@ -71,7 +72,7 @@ async function unmute(guild, userId, message, _reason) {
   }
 
   delete MUTES[guild.id][userId];
-  MUTES.save();
+  save(MUTES, FILEPATH);
 
   const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
   const reason = new Reason(userId, ":loud_sound: **Unmute**", _reason, message?.author.tag);
