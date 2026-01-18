@@ -315,10 +315,15 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (reaction.emoji.name !== STAR_EMOJI)
       return;
 
-    const message = reaction.message;
+    let message = reaction.message;
 
     if (!message.guild)
       return;
+
+    if (!message.content) {
+      //We are dealing with an uncached message
+      message = await message.channel.messages.fetch(message.id);
+    }
 
     const member = message.guild.members.cache.get(user.id);
     if (!member)
@@ -326,6 +331,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
 
     //only approved users contribute to starboarding, otherwise disallow star reactions
     if (member?.roles?.cache?.some(role => process.env.EDIT_DATA_ROLES.includes(role.id))) {
+      await reaction.users.fetch(); //This becomes necessary for some reason if the message was not cached
       if (reaction.users.cache.size < STAR_THRESHOLD)
         return;
 
