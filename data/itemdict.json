@@ -491,13 +491,6 @@
     "single": true,
     "last_edited_by": "crooooww"
   },
-  "mata": {
-    "cost": -1,
-    "name": "remove",
-    "emoji": "",
-    "single": false,
-    "last_edited_by": "keebaque"
-  },
   "kbh": {
     "cost": 10000000,
     "name": "Kahoobb's Soul",
@@ -505,7 +498,7 @@
     "single": true,
     "last_edited_by": "hxperant"
   },
-  "miat": {
+  "miata": {
     "cost": 10000,
     "name": "1989 Mazda Miata MX-5",
     "emoji": ":red_car:",
