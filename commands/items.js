@@ -47,6 +47,21 @@ async function editItem(message, args) {
   return;
 }
 
+async function deleteItem(message, args) {
+  if (!(await checkDataEdit(message))) return; // No permission
+
+  if (args.length != 1) {
+    await message.channel.send(
+      "The edititem command requires 1 parameter: the calling code of the item (3 characters please)");
+    return;
+  }
+
+  const output = deleteItem(args[0]);
+
+  await message.channel.send(output);
+  return;
+}
+
 async function editPrice(message, args) {
   if (!(await checkDataEdit(message))) return; // No permission
 
