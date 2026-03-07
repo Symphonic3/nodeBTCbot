@@ -2,6 +2,7 @@ const axios = require('axios');
 const { cachifyFunction } = require('../utils/utils');
 
 const RESOURCE_INDEX_URL = 'https://raw.githubusercontent.com/MrRGnome/btc-resources/refs/heads/master/data/resource-index.json';
+const RESOURCE_BASE_URL = 'https://btcmaxis.com/';
 const QUERY_PIN_OVERRIDES = {
   knots: ['knotslies', 'knots lies']
 };
@@ -11,13 +12,26 @@ function normalizeText(value) {
   return String(value ?? '').toLowerCase().trim();
 }
 
+function sanitizeResourceUrl(url) {
+  const raw = String(url ?? '').trim();
+
+  if (!raw)
+    return '';
+
+  if (/^https?:\/\//i.test(raw))
+    return raw;
+
+  const relativePath = raw.replace(/^\/+/, '');
+  return RESOURCE_BASE_URL + relativePath;
+}
+
 function buildSearchFields(resource) {
   const tags = Array.isArray(resource.tags) ? resource.tags : [];
   const keywords = Array.isArray(resource.externalKeywords) ? resource.externalKeywords : [];
 
   return {
     name: normalizeText(resource.name),
-    url: normalizeText(resource.url),
+    url: normalizeText(sanitizeResourceUrl(resource.url)),
     content: normalizeText(resource.content),
     summary: normalizeText(resource.externalSummary),
     category: normalizeText(resource.category || resource.categoryHeader),
@@ -119,7 +133,10 @@ async function fetchResourceIndex() {
     if (!Array.isArray(resources))
       throw new Error('Invalid resource index payload.');
 
-    return resources;
+    return resources.map(resource => ({
+      ...resource,
+      url: sanitizeResourceUrl(resource.url)
+    }));
   } catch (error) {
     console.error('Error fetching resource index:', error.message);
     return null;
