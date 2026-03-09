@@ -1,4 +1,4 @@
-const { saveItem, editItemPrice } = require("../services/items.js");
+const { saveItem, deleteItem, editItemPrice } = require("../services/items.js");
 const { checkDataEdit } = require("../utils/discordutils.js");
  
 async function addItem(message, args) {
@@ -47,7 +47,7 @@ async function editItem(message, args) {
   return;
 }
 
-async function deleteItem(message, args) {
+async function removeItem(message, args) {
   if (!(await checkDataEdit(message))) return; // No permission
 
   if (args.length != 1) {
