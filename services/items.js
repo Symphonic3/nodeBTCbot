@@ -148,4 +148,4 @@ function getAllItems() {
   return Object.keys(ITEM_DICT);
 }
 
-module.exports = { saveItem, editItemPrice, getItemPrice, isSingleItem, formatItem, getAllItems }
+module.exports = { saveItem, deleteItem, editItemPrice, getItemPrice, isSingleItem, formatItem, getAllItems }
