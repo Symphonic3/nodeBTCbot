@@ -84,6 +84,9 @@ module.exports = {
   edititem: {
     execute: editItem
   },
+  removeitem: {
+    execute: removeItem
+  },
   editprice: {
     execute: editPrice
   }
