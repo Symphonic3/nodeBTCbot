@@ -58,7 +58,7 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
 
 /**
  * Removes an item.
- * @param {string} code - The unique calling code (3-4 characters).
+ * @param {string} code - The unique calling code (3-9 characters).
  * @returns {string} Result message, either success or an error.
  */
 function deleteItem(code) {
