@@ -2,8 +2,22 @@
 const { Message } = require('discord.js');
 const { getAsDurationMs } = require('./utils');
 
-const editDataRoles = process.env.EDIT_DATA_ROLES;
+const editDataRoleIds = new Set(((process.env.EDIT_DATA_ROLES || '').match(/\d+/g) || []));
 const modRole = process.env.MOD_ROLE;
+
+function hasModRole(member) {
+  if (!member)
+    return false;
+
+  return member.roles?.cache?.some(role => role.name === modRole) || false;
+}
+
+function canEditData(member) {
+  if (!member)
+    return false;
+
+  return hasModRole(member) || member.roles?.cache?.some(role => editDataRoleIds.has(role.id)) || false;
+}
 
 /**
  * Checks if the author of this messsage has permission to edit data,
@@ -11,7 +25,7 @@ const modRole = process.env.MOD_ROLE;
  * @param {Message} message 
  */
 async function checkDataEdit(message) {
-  const hasPermission = message.member?.roles?.cache?.some(role => editDataRoles.includes(role.id));
+  const hasPermission = canEditData(message.member);
 
   if (!hasPermission) {
     // No permission to proceed
@@ -27,7 +41,7 @@ async function checkDataEdit(message) {
  * @param {Message} message 
  */
 async function checkMod(message) {
-  const hasPermission = message.member?.roles?.cache?.some(role => role.name === modRole);
+  const hasPermission = hasModRole(message.member);
 
   if (!hasPermission) {
     // No permission to proceed
@@ -119,4 +133,4 @@ class Reason {
   }
 }
 
-module.exports = { checkDataEdit, checkMod, extractIds, extractReason, extractDuration, extractReasonWithoutDuration, Reason }
+module.exports = { checkDataEdit, checkMod, canEditData, extractIds, extractReason, extractDuration, extractReasonWithoutDuration, Reason }
