@@ -516,13 +516,14 @@ client.on('messageReactionAdd', async (reaction, user) => {
     if (alreadyPublished)
       return;
 
-    await message.reply("Article published and available at https://btcmaxies.com/articles.html");
+    await message.reply("Article published and available at https://btcmaxis.com/articles.html");
   } catch (error) {
     console.error('Error processing article reactions:', error);
   }
 });
 
 client.login(TOKEN);
+
 
 
 
