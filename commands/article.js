@@ -3,6 +3,7 @@ const { createDraftArticle, setArticleForumPostUrl } = require('../services/arti
 const { canEditData } = require('../utils/discordutils');
 
 const DISCORD_MESSAGE_LINK_REGEX = /<?https?:\/\/(?:canary\.)?discord\.com\/channels\/(\d+)\/(\d+)\/(\d+)>?/gi;
+const ARTICLE_HELP_RESPONSE = "The calling structure for making an article is ```!article <title>\n<content>``` where every message link will be exactly that message content, including images and most markdown formatting. All the messages, including the parent one, and their white space are respected. You're stitching them together as they literally are.\n\nOnce an article has been made it will show up in the articles forum. Reply '!delete' in the forum to remove the article from the forum and the website. To promote the article to the BTCMaxis articles list, react in the forum with a :btc: emoji";
 
 function canUserCreateArticle(member) {
   return canEditData(member);
@@ -206,6 +207,11 @@ async function articleCommand(message, args) {
   }
 
   const { title, bodyTemplate } = parseArticleCommandInput(message);
+  if (!title && !bodyTemplate) {
+    await message.reply(ARTICLE_HELP_RESPONSE);
+    return;
+  }
+
   if (!title || !bodyTemplate) {
     await message.reply(`Usage: \`${message.client.prefix}article <title>\` then body text with Discord message links.`);
     return;
@@ -327,6 +333,7 @@ module.exports = {
     execute: articleCommand
   }
 };
+
 
 
 
