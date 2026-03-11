@@ -128,3 +128,6 @@ dist
 
 # VScode config
 .vscode
+
+# Local temp scripts/output
+tmp/

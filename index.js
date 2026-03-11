@@ -4,9 +4,10 @@ const { formatCurrency, getBitcoinPriceUSD } = require('./services/yahoofinance'
 const { getCaptchaImage, captchaForUser } = require('./services/captcha');
 const { isMemo } = require('./services/memos');
 const { initMutes } = require('./services/mutes');
-const { Reason } = require('./utils/discordutils');
+const { Reason, canEditData } = require('./utils/discordutils');
 const { modLogAdd } = require('./services/moderation');
 const { initNicks, canUserUpdateNickname } = require('./services/tempnick');
+const { publishArticleById } = require('./services/articles');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
@@ -330,7 +331,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
       return;
 
     //only approved users contribute to starboarding, otherwise disallow star reactions
-    if (member?.roles?.cache?.some(role => process.env.EDIT_DATA_ROLES.includes(role.id))) {
+    if (canEditData(member)) {
       await reaction.users.fetch(); //This becomes necessary for some reason if the message was not cached
       if (reaction.users.cache.size < STAR_THRESHOLD)
         return;
@@ -385,4 +386,157 @@ client.on('messageReactionAdd', async (reaction, user) => {
   }
 });
 
+
+const ARTICLE_PROMOTE_EMOJI = 'btc';
+const ARTICLE_PROMOTE_THRESHOLD = Math.max(1, Number.parseInt(process.env.ARTICLE_PROMOTE_THRESHOLD || '2', 10) || 2);
+const ENABLE_ARTICLES = process.env.ENABLE_ARTICLES === '1';
+const ARTICLE_ID_LINK_REGEX = /https:\/\/btcmaxis\.com\/article\.html\?id=([0-9a-fA-F-]{36})/i;
+
+function isModerator(member) {
+  if (!member)
+    return false;
+
+  return member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE);
+}
+
+function canUserTriggerArticle(member) {
+  return canEditData(member);
+}
+
+function isArticleChannel(message) {
+  const configuredChannel = process.env.ARTICLE_CHANNEL;
+
+  if (!configuredChannel || !message?.channel)
+    return false;
+
+  if (message.channel.id === configuredChannel || message.channel.name === configuredChannel)
+    return true;
+
+  if (!message.channel.isThread?.())
+    return false;
+
+  const parentChannel = message.channel.parent;
+  if (!parentChannel)
+    return false;
+
+  return parentChannel.id === configuredChannel || parentChannel.name === configuredChannel;
+}
+
+function isForumParentPost(message) {
+  if (!message?.channel?.isThread?.())
+    return false;
+
+  if (message.channel.parent?.type !== ChannelType.GuildForum)
+    return false;
+
+  return message.id === message.channel.id;
+}
+
+function extractArticleIdFromPreview(messageContent) {
+  const match = String(messageContent || '').match(ARTICLE_ID_LINK_REGEX);
+  return match?.[1] || null;
+}
+
+client.on('messageReactionAdd', async (reaction, user) => {
+  try {
+    if (!ENABLE_ARTICLES)
+      return;
+
+    if (user.bot)
+      return;
+
+    if (reaction.emoji.name?.toLowerCase() !== ARTICLE_PROMOTE_EMOJI)
+      return;
+
+    let message = reaction.message;
+
+    if (!message.guild)
+      return;
+
+    if (!message.content) {
+      // We are dealing with an uncached message
+      message = await message.channel.messages.fetch(message.id);
+    }
+
+    if (!isArticleChannel(message))
+      return;
+
+    if (!isForumParentPost(message))
+      return;
+
+    if (message.author?.id !== client.user.id)
+      return;
+
+    const articleId = extractArticleIdFromPreview(message.content);
+    if (!articleId)
+      return;
+
+    let member = message.guild.members.cache.get(user.id);
+    if (!member) {
+      member = await message.guild.members.fetch(user.id).catch(() => null);
+    }
+
+    if (!canUserTriggerArticle(member)) {
+      await reaction.users.remove(user.id).catch(() => null);
+      return;
+    }
+
+    await reaction.users.fetch();
+
+    let voteWeight = 0;
+    for (const reactingUser of reaction.users.cache.values()) {
+      if (reactingUser.bot)
+        continue;
+
+      let reactingMember = message.guild.members.cache.get(reactingUser.id);
+      if (!reactingMember) {
+        reactingMember = await message.guild.members.fetch(reactingUser.id).catch(() => null);
+      }
+
+      if (!canUserTriggerArticle(reactingMember)) {
+        await reaction.users.remove(reactingUser.id).catch(() => null);
+        continue;
+      }
+
+      voteWeight += isModerator(reactingMember) ? ARTICLE_PROMOTE_THRESHOLD : 1;
+    }
+
+    if (voteWeight < ARTICLE_PROMOTE_THRESHOLD)
+      return;
+
+    const { published, alreadyPublished, error } = await publishArticleById(articleId, { forum_post_url: message.url });
+    if (!published) {
+      if (error) {
+        console.error(`Article publish failed for ${articleId}: ${error}`);
+        await message.reply(`article publish failed: ${error}`);
+      }
+      return;
+    }
+
+    if (alreadyPublished)
+      return;
+
+    await message.reply("Article published and available at https://btcmaxies.com/articles.html");
+  } catch (error) {
+    console.error('Error processing article reactions:', error);
+  }
+});
+
 client.login(TOKEN);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
