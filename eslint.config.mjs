@@ -12,6 +12,7 @@ export default defineConfig([
     files: ["**/*.js"],
     rules: {
       indent: ["error", 2], // Enforce 2-space indent
+      'eol-last': ["error", "always"], // Enforce eof newlines
     },
   },
 ]);
