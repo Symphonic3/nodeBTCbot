@@ -111,7 +111,7 @@ async function mine(message, args) {
     energy_string = `${watts.toFixed(0)} Wh`;
   }
 
-  const message_string = `Your hashrate is ${hash_rate.toFixed(4)} TH/s, and your expected income each ${period} is ${(net_income).toFixed(8)} BTC. Using ${energy_string} costing ${(electricity_cost).toFixed(8)} BTC, your expected net is ${(net_income).toFixed(8)} BTC.`;
+  const message_string = `Your hashrate is ${hash_rate.toFixed(4)} TH/s, and your expected gross income each ${period} is ${(gross_income).toFixed(8)} BTC. Using ${energy_string} costing ${(electricity_cost).toFixed(8)} BTC, your expected net income is ${(net_income).toFixed(8)} BTC.`;
 
   message.channel.send(message_string);
 }

@@ -1,4 +1,4 @@
-const { saveItem, editItemPrice } = require("../services/items.js");
+const { saveItem, deleteItem, editItemPrice } = require("../services/items.js");
 const { checkDataEdit } = require("../utils/discordutils.js");
  
 async function addItem(message, args) {
@@ -47,6 +47,21 @@ async function editItem(message, args) {
   return;
 }
 
+async function removeItem(message, args) {
+  if (!(await checkDataEdit(message))) return; // No permission
+
+  if (args.length != 1) {
+    await message.channel.send(
+      "The edititem command requires 1 parameter: the calling code of the item (3 characters please)");
+    return;
+  }
+
+  const output = deleteItem(args[0]);
+
+  await message.channel.send(output);
+  return;
+}
+
 async function editPrice(message, args) {
   if (!(await checkDataEdit(message))) return; // No permission
 
@@ -68,6 +83,9 @@ module.exports = {
   },
   edititem: {
     execute: editItem
+  },
+  removeitem: {
+    execute: removeItem
   },
   editprice: {
     execute: editPrice

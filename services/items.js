@@ -57,6 +57,28 @@ function saveItem(code, name, price, mode, lastEditedBy, emoji = "", pricingType
 }
 
 /**
+ * Removes an item.
+ * @param {string} code - The unique calling code (3-9 characters).
+ * @returns {string} Result message, either success or an error.
+ */
+function deleteItem(code) {
+  // Check if the memo exists
+  if (!code || code.length < 3 || code.length > 9) {
+    return "Please use a calling code that is 3-9 characters.";
+  }
+
+  const itemExists = Object.prototype.hasOwnProperty.call(ITEM_DICT, code.toLowerCase());
+  if (!itemExists) {
+    return `The calling code ${code} does not exist. Use the !additem command or an existing code.`;
+  }
+  
+  // Remove the memo from the store
+  delete ITEM_DICT[code.toLowerCase()];
+  save(ITEM_DICT, FILEPATH);
+  return `Successfully removed item: ${code}`;
+}
+
+/**
  * Edits the price of an existing item.
  * @param {string} code - The calling code of the item.
  * @param {number|string} price - The new price in USD.
@@ -126,4 +148,4 @@ function getAllItems() {
   return Object.keys(ITEM_DICT);
 }
 
-module.exports = { saveItem, editItemPrice, getItemPrice, isSingleItem, formatItem, getAllItems }
+module.exports = { saveItem, deleteItem, editItemPrice, getItemPrice, isSingleItem, formatItem, getAllItems }
