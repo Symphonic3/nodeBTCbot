@@ -325,7 +325,8 @@ async function articleCommand(message, args) {
     console.error(`Draft forum URL update failed for ${article.id}${detail}`);
   }
 
-  await message.reply(`Draft created: <https://btcmaxis.com/article.html?id=${article.id}> | <${thread.url}>`);
+  const articleUrl = `https://btcmaxis.com/article.html?id=${article.id}`;
+  await message.reply(`[Article Link](<${articleUrl}>) | [Article Comments](<${thread.url}>)`);
 }
 
 module.exports = {
