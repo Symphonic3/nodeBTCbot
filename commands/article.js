@@ -3,6 +3,7 @@ const { createDraftArticle, setArticleForumPostUrl } = require('../services/arti
 const { canEditData } = require('../utils/discordutils');
 
 const DISCORD_MESSAGE_LINK_REGEX = /<?https?:\/\/(?:canary\.)?discord\.com\/channels\/(\d+)\/(\d+)\/(\d+)>?/gi;
+const MAX_NESTED_ARTICLE_LINK_DEPTH = 5;
 const ARTICLE_HELP_RESPONSE = "The calling structure for making an article is ```!article <title>\n<content>``` where every message link will be exactly that message content, including images and most markdown formatting. All the messages, including the parent one, and their white space are respected. You're stitching them together as they literally are.\n\nOnce an article has been made it will show up in the articles forum. Reply '!delete' in the forum to remove the article from the forum and the website. To promote the article to the BTCMaxis articles list, react in the forum with a :btc: emoji";
 
 function canUserCreateArticle(member) {
@@ -154,6 +155,87 @@ function collectLinkedMessageContent(message) {
   return `${messageBody}\n${imageLinks.join('\n')}`;
 }
 
+function extractDiscordMessageLinks(text) {
+  DISCORD_MESSAGE_LINK_REGEX.lastIndex = 0;
+  return Array.from(String(text || '').matchAll(DISCORD_MESSAGE_LINK_REGEX)).map(match => ({
+    rawToken: String(match[0]),
+    guildId: String(match[1]),
+    channelId: String(match[2]),
+    messageId: String(match[3])
+  }));
+}
+
+async function resolveLinkedMessageContent({
+  commandMessage,
+  guildId,
+  channelId,
+  messageId,
+  depth,
+  authorProfile,
+  contributorMap,
+  linkedMessageIds,
+  resolvedContentByMessageId,
+  activeMessageIds
+}) {
+  if (resolvedContentByMessageId.has(messageId))
+    return resolvedContentByMessageId.get(messageId);
+
+  const linkedMessage = await fetchLinkedDiscordMessage(commandMessage, guildId, channelId, messageId);
+  linkedMessageIds.push(messageId);
+
+  const linkedProfile = await formatAuthorProfile(linkedMessage);
+  const linkedUsername = String(linkedProfile?.username || '').trim() || 'Anonymous';
+  if (linkedUsername.toLowerCase() !== authorProfile.username.toLowerCase())
+    addUniqueAuthor(contributorMap, linkedProfile);
+
+  let resolvedContent = collectLinkedMessageContent(linkedMessage);
+
+  if (depth >= MAX_NESTED_ARTICLE_LINK_DEPTH) {
+    resolvedContentByMessageId.set(messageId, resolvedContent);
+    return resolvedContent;
+  }
+
+  if (activeMessageIds.has(messageId)) {
+    resolvedContentByMessageId.set(messageId, resolvedContent);
+    return resolvedContent;
+  }
+
+  activeMessageIds.add(messageId);
+  try {
+    const nestedLinks = extractDiscordMessageLinks(resolvedContent);
+    const replacementByToken = new Map();
+
+    for (const nestedLink of nestedLinks) {
+      if (activeMessageIds.has(nestedLink.messageId))
+        continue;
+
+      const nestedContent = await resolveLinkedMessageContent({
+        commandMessage,
+        guildId: nestedLink.guildId,
+        channelId: nestedLink.channelId,
+        messageId: nestedLink.messageId,
+        depth: depth + 1,
+        authorProfile,
+        contributorMap,
+        linkedMessageIds,
+        resolvedContentByMessageId,
+        activeMessageIds
+      });
+
+      replacementByToken.set(nestedLink.rawToken, nestedContent);
+    }
+
+    for (const [rawToken, nestedContent] of replacementByToken.entries()) {
+      resolvedContent = resolvedContent.split(rawToken).join(nestedContent);
+    }
+  } finally {
+    activeMessageIds.delete(messageId);
+  }
+
+  resolvedContentByMessageId.set(messageId, resolvedContent);
+  return resolvedContent;
+}
+
 async function resolvePromotionEmojiToken(guild) {
   const fallback = ':btc:';
   if (!guild?.emojis)
@@ -217,8 +299,7 @@ async function articleCommand(message, args) {
     return;
   }
 
-  DISCORD_MESSAGE_LINK_REGEX.lastIndex = 0;
-  const matches = Array.from(bodyTemplate.matchAll(DISCORD_MESSAGE_LINK_REGEX));
+  const matches = extractDiscordMessageLinks(bodyTemplate);
   if (matches.length === 0) {
     await message.reply('Include at least one Discord message link in the article body.');
     return;
@@ -234,36 +315,36 @@ async function articleCommand(message, args) {
   };
 
   const replacementByToken = new Map();
-  const replacementByMessageId = new Map();
+  const resolvedContentByMessageId = new Map();
 
   for (const match of matches) {
-    const rawToken = String(match[0]);
-    const guildId = String(match[1]);
-    const channelId = String(match[2]);
-    const linkedMessageId = String(match[3]);
+    const { rawToken, guildId, channelId, messageId: linkedMessageId } = match;
 
-    if (replacementByMessageId.has(linkedMessageId)) {
-      replacementByToken.set(rawToken, replacementByMessageId.get(linkedMessageId));
+    if (resolvedContentByMessageId.has(linkedMessageId)) {
+      replacementByToken.set(rawToken, resolvedContentByMessageId.get(linkedMessageId));
       continue;
     }
 
-    let linkedMessage;
+    let linkedContent;
     try {
-      linkedMessage = await fetchLinkedDiscordMessage(message, guildId, channelId, linkedMessageId);
+      linkedContent = await resolveLinkedMessageContent({
+        commandMessage: message,
+        guildId,
+        channelId,
+        messageId: linkedMessageId,
+        depth: 1,
+        authorProfile,
+        contributorMap,
+        linkedMessageIds,
+        resolvedContentByMessageId,
+        activeMessageIds: new Set()
+      });
     } catch (error) {
       await message.reply(error.message);
       return;
     }
 
-    const linkedProfile = await formatAuthorProfile(linkedMessage);
-    const linkedUsername = String(linkedProfile?.username || '').trim() || 'Anonymous';
-    if (linkedUsername.toLowerCase() !== authorProfile.username.toLowerCase())
-      addUniqueAuthor(contributorMap, linkedProfile);
-
-    const linkedContent = collectLinkedMessageContent(linkedMessage);
-    replacementByMessageId.set(linkedMessageId, linkedContent);
     replacementByToken.set(rawToken, linkedContent);
-    linkedMessageIds.push(linkedMessageId);
   }
 
   let articleContent = bodyTemplate;
@@ -334,16 +415,4 @@ module.exports = {
     execute: articleCommand
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
