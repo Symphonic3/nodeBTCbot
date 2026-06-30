@@ -29,7 +29,7 @@ async function addressCommand(message, args) {
   const mempoolCount = mempoolStats.tx_count.toLocaleString('en-US', { maximumFractionDigits: 0 });
   const formattedMempoolAmt = mempoolAmt.toLocaleString('en-US', { maximumFractionDigits: 0 });
 
-  const messageString = `View in [bitcointech.wiki/editor](<https://bitcointech.wiki/editor?d=${data.address}>)\`\`\`
+  const messageString = `View in [bitcointech.space/editor](<https://bitcointech.space/editor?d=${data.address}>)\`\`\`
 Address ${data.address}
 Balance is ${formattedBalance} sat
 Received ${receivedCount} TXO for ${receivedAmt} sat
