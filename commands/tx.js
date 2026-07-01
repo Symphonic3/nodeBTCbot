@@ -42,7 +42,7 @@ async function txCommand(message, args) {
   const inputs = data.vin.length;
   const outputs = data.vout.length;
 
-  const message_string = `View in [bitcointech.wiki/editor](<https://bitcointech.wiki/editor?d=${data.txid}>)\`\`\`TX ${data.txid}
+  const message_string = `View in [bitcointech.space/editor](<https://bitcointech.space/editor?d=${data.txid}>)\`\`\`TX ${data.txid}
 ${confirmed} ${block} ${time}
 Sent ${amount.toLocaleString('en-US', { maximumFractionDigits: 0 })} sat for ${fee.toLocaleString('en-US', { maximumFractionDigits: 0 })} sat fee (${feerate.toLocaleString('en-US', { maximumFractionDigits: 2 })} sat/vbtye, ${feepercent.toLocaleString('en-US', { maximumFractionDigits: 2 })}%)
 ${inputs} inputs, ${outputs} outputs, ${size.toLocaleString('en-US', { maximumFractionDigits: 2 })} vbytes
