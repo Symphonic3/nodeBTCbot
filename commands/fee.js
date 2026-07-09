@@ -2,7 +2,7 @@ const axios = require('axios');
 
 // eslint-disable-next-line no-unused-vars
 async function feeCommand(message, args) {
-  const api = "https://mempool.space/api/v1/fees/mempool-blocks";
+  const api = process.env.MEMPOOL_BLOCKS_URL || "https://mempool.space/api/v1/fees/mempool-blocks";
   let data;
   try {
     const response = await axios.get(api);
