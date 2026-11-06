@@ -84,16 +84,17 @@ async function banAfterCommand(message, args) {
 
   // For each message in range, try to ban the author if they don't have the mod role.
   for (const msg of messagesInRange.values()) {
-    // Skip messages without a guild member
-    if (!msg.member) continue;
-    if (msg.member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
+    // History messages do not guarantee that their authors are in the member cache.
+    const member = await message.guild.members.fetch(msg.author.id).catch(() => null);
+    if (!member) continue;
+    if (member.roles?.cache?.some(role => role.name === process.env.MOD_ROLE)) {
       await message.channel.send("Can't ban mods");
     } else {
       try {
-        await message.guild.members.ban(msg.member.id);
+        await message.guild.members.ban(member.id);
         n++;
       } catch (err) {
-        console.error(`Error banning ${msg.member.user.tag}: ${err}`);
+        console.error(`Error banning ${member.user.tag}: ${err}`);
       }
     }
   }

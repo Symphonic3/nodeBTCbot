@@ -10,12 +10,17 @@ const _timeouts = {};
  * @returns true if the user can change their nick, otherwise false.
  */
 function canUserUpdateNickname(member, newNick) {
-  return !TEMPNICKS[member.guild.id][member.user.id] 
-    || TEMPNICKS[member.guild.id][member.user.id].nick === newNick;
+  const requiredNickname = getRequiredNickname(member);
+  return requiredNickname === undefined || requiredNickname === newNick;
 }
 
 const truncate = (str, maxLength) => 
   str.length > maxLength ? str.slice(0, maxLength) : str;
+
+function getRequiredNickname(member) {
+  const restriction = TEMPNICKS[member.guild.id]?.[member.user.id];
+  return restriction ? truncate(restriction.nick, 32) : undefined;
+}
 
 async function tempnick(guild, userId, duration, message, _reason, nick) {
   if (TEMPNICKS[guild.id][userId])
@@ -118,4 +123,4 @@ function initNicks(guild) {
   }
 }
 
-module.exports = { tempnick, unnick, initNicks, canUserUpdateNickname }
+module.exports = { tempnick, unnick, initNicks, canUserUpdateNickname, getRequiredNickname }
