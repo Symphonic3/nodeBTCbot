@@ -6,14 +6,24 @@ const { isMemo } = require('./services/memos');
 const { initMutes } = require('./services/mutes');
 const { Reason, canEditData } = require('./utils/discordutils');
 const { modLogAdd } = require('./services/moderation');
-const { initNicks, canUserUpdateNickname } = require('./services/tempnick');
+const { initNicks, canUserUpdateNickname, getRequiredNickname } = require('./services/tempnick');
 const { publishArticleById } = require('./services/articles');
 
 const TOKEN = process.env.DISCORD_TOKEN;
 
-// Bot will use all intents & partials
+// Only GuildMembers and MessageContent require privileged intent toggles.
+// GuildPresences is not needed to update the bot's own Bitcoin-price status.
 const client = new Client({
-  intents: Object.values(GatewayIntentBits),
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildModeration,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.MessageContent,
+  ],
   partials: Object.values(Partials),
 });
 client.prefix = process.env.BOT_PREFIX || '!';
@@ -149,16 +159,23 @@ client.on('messageCreate', async (message) => {
   } else if (process.env.ENABLE_ANTI_BOT === '1' && message.author.id !== client.user.id) {
     // Handle DM's
     if (message.content.toUpperCase() === captchaForUser(message.author.id)) {
+      let verified = false;
       for (let guild of client.guilds.cache.values()) {
         const role = guild.roles.cache.get(process.env.USER_ROLE);
         if (!role) {
           console.log(`Can't find role in ${guild.name}`);
           continue;
         }
-        const member = guild.members.cache.get(message.author.id);
+        // Without Presence Intent, existing members may not be cached after startup.
+        const member = await guild.members.fetch(message.author.id).catch(() => null);
+        if (!member)
+          continue;
         await member.roles.add(role);
+        verified = true;
       }
-      await message.channel.send('Thank you, welcome to the chat.');
+      await message.channel.send(verified
+        ? 'Thank you, welcome to the chat.'
+        : 'Unable to verify your server membership right now. Please try again.');
     }
   }
 });
@@ -266,38 +283,42 @@ client.on('guildBanRemove', async (ban) => {
   }
 });
 
-//track timeouts
-client.on('guildMemberUpdate', async (oldMember, newMember) => {
+// Audit entries provide timeout changes even when the member was not cached.
+// This uses GuildModeration and the same View Audit Log permission as ban logging.
+client.on('guildAuditLogEntryCreate', async (entry, guild) => {
   try {
-    const guild = newMember.guild;
+    if (entry.action !== AuditLogEvent.MemberUpdate || !entry.targetId)
+      return;
 
-    if (newMember.communicationDisabledUntilTimestamp !== oldMember.communicationDisabledUntilTimestamp) {
-      //timeout changes
-      
-      const entry = await getRecentlyCreatedAuditLogFor(guild, AuditLogEvent.MemberUpdate, 
-        entry => entry.target.id === newMember?.id);
-      
-      const info = newMember.communicationDisabledUntilTimestamp ? `Expires <t:${Math.floor(newMember.communicationDisabledUntilTimestamp / 1000)}:R>` : `Removed`;
-      
-      let _reason = entry?.reason;
-      _reason = _reason ? _reason + " | " + info : info;
-      const modTag = entry?.executor.tag ?? 'Unknown mod';
-      const reason = new Reason(newMember.user.id, ":hourglass: **Timeout**", _reason, modTag);
-      
-      const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
-      if (reportChannel) {
-        await reportChannel.send(reason.forReports());
-      }
-      
-      modLogAdd(newMember.user.id, reason.forModlog(), true);
+    const timeoutChange = entry.changes.find(change => change.key === 'communication_disabled_until');
+    if (!timeoutChange)
+      return;
+
+    const info = timeoutChange.new
+      ? `Expires <t:${Math.floor(Date.parse(timeoutChange.new) / 1000)}:R>`
+      : 'Removed';
+    const detail = entry.reason ? entry.reason + ' | ' + info : info;
+    const modTag = entry.executor?.username
+      ? entry.executor.tag
+      : (entry.executorId ? `<@${entry.executorId}>` : 'Unknown mod');
+    const reason = new Reason(entry.targetId, ":hourglass: **Timeout**", detail, modTag);
+
+    const reportChannel = guild.channels.cache.find(channel => channel.name === process.env.REPORT_CHANNEL);
+    if (reportChannel) {
+      await reportChannel.send(reason.forReports());
     }
 
-    if (newMember.nickname !== oldMember.nickname) {
-      //nickname changes
+    modLogAdd(entry.targetId, reason.forModlog(), true);
+  } catch (error) {
+    console.error('Error logging timeout:', error);
+  }
+});
 
-      if (!canUserUpdateNickname(newMember, newMember.nickname)) {
-        await newMember.setNickname(oldMember.nickname);
-      }
+// Use the saved restriction, not an old member snapshot that may be partial.
+client.on('guildMemberUpdate', async (_oldMember, newMember) => {
+  try {
+    if (!canUserUpdateNickname(newMember, newMember.nickname)) {
+      await newMember.setNickname(getRequiredNickname(newMember));
     }
   } catch (error) {
     console.error('Error logging member update:', error);
@@ -326,7 +347,7 @@ client.on('messageReactionAdd', async (reaction, user) => {
       message = await message.channel.messages.fetch(message.id);
     }
 
-    const member = message.guild.members.cache.get(user.id);
+    const member = await message.guild.members.fetch(user.id).catch(() => null);
     if (!member)
       return;
 
